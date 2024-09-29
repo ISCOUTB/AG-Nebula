@@ -1,0 +1,98 @@
+services:
+
+  frontend:
+    build:
+      context: ./frontend  
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
+    volumes:
+      - ./frontend:/app
+    environment:
+      NODE_ENV: production
+
+  mysql:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+      MYSQL_DATABASE: exampledb
+      MYSQL_USER: exampleuser
+      MYSQL_PASSWORD: examplepass
+    ports:
+      - 3306:3306
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  app:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    ports:
+      - 8010:8010
+    volumes:
+      - ./app:/app
+
+  backend-flask:
+    build:
+      context: ./backend-flask
+      dockerfile: Dockerfile
+    ports:
+      - 8011:8011
+    volumes:
+      - ./backend-flask:/backend
+
+
+
+    environment:
+      - NODE_ENV=production
+
+  mongodb:
+    image: mongo:latest
+    ports:
+      - 27017:27017
+    volumes:
+      - mongo_data:/data/db
+
+  apache:
+    image: httpd:latest
+    ports:
+      - 80:80
+    volumes:
+      - ./app:/usr/local/apache2/htdocs/
+
+  redis:
+    image: redis:latest
+    ports:
+      - 6379:6379
+    volumes:
+      - redis_data:/data
+
+  postgresql:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: exampledb
+      POSTGRES_USER: exampleuser
+      POSTGRES_PASSWORD: examplepass
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  adminer:
+    image: adminer:latest
+    ports:
+      - 8080:8080
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - 5050:80
+
+volumes:
+  mysql_data:
+  mongo_data:
+  redis_data:
+  postgres_data:
