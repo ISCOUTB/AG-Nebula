@@ -32,14 +32,7 @@ services:
     volumes:
       - ./app:/app
 
-  backend-flask:
-    build:
-      context: ./backend-flask
-      dockerfile: Dockerfile
-    ports:
-      - 8011:8011
-    volumes:
-      - ./backend-flask:/backend
+
 
 
 
