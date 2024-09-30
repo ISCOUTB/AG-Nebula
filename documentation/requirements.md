@@ -1,4 +1,5 @@
 1.1 Functional Requirements
+
 1.1.1 Data Upload
 The system must allow users to upload CSV files.
 The system must validate the file structure and provide error messages for incorrect formats.
@@ -21,6 +22,7 @@ Users must be able to export results and visualizations in formats like PDF.
 The system must include accessible documentation to guide users on how to use the platform.
 
 1.2 Non-Functional Requirements
+
 1.2.1 Performance
 The application must maintain fast and consistent response times, even with multiple concurrent users.
 1.2.2 Usability
