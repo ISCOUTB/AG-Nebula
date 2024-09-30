@@ -19,3 +19,18 @@ The system must display model results through a clear graphical interface with i
 Users must be able to export results and visualizations in formats like PDF.
 1.1.7 Educational Support and Documentation
 The system must include accessible documentation to guide users on how to use the platform.
+
+1.2 Non-Functional Requirements
+1.2.1 Performance
+The application must maintain fast and consistent response times, even with multiple concurrent users.
+1.2.2 Usability
+The user interface must adhere to Google Material 3 design principles, ensuring consistency and accessibility.
+The application should be intuitive and easy to use, even for users with limited knowledge of data analysis.
+1.2.3 Reliability
+The application must be available 24/7 and include protocols for efficient failure handling.
+1.2.4 Compatibility
+The application must be compatible with modern web browsers (Google Chrome, Mozilla Firefox, Microsoft Edge, Safari).
+It must adjust well to various screen resolutions and devices, including mobile and tablet.
+1.2.5 Maintenance
+The source code must be well-structured and documented for easy maintenance and updates.
+The system must be modular to allow for adding new features or updating existing ones without affecting overall stability.
