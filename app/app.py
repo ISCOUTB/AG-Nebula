@@ -2,7 +2,6 @@ from fastapi import FastAPI, HTTPException, UploadFile, File
 from typing import List
 from pydantic import BaseModel
 import pandas as pd  
-import os
 
 app = FastAPI(
     title="Nebula API",
@@ -20,23 +19,16 @@ app = FastAPI(
             "externalDocs": {"description": "Más información sobre los modelos", "url": "http://swagger.io"},
         },
     ],
-)
 
+)
 users_db = {}
 models_db = {}
-
-
-
-# Carpeta temporal 
-UPLOAD_FOLDER = './uploads'
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-
-
 
 
 # Esquemas 
 
     
+
 class UserBase(BaseModel):
     name: str
     email: str

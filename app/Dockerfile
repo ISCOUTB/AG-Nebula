@@ -1,20 +1,22 @@
-# Usa una imagen base de Python
 FROM python:3.12
 
-# Establece el directorio de trabajo
+RUN apt-get update && \
+    apt-get install -yq tzdata && \
+    ln -fs /usr/share/zoneinfo/America/Bogota /etc/localtime && \
+    dpkg-reconfigure -f noninteractive tzdata && mkdir /app
 WORKDIR /app
 
-# Copia el archivo requirements.txt
-COPY requirements.txt .
+COPY requirements.txt ./
+RUN pip3 install -r requirements.txt
 
-# Instala las dependencias en el contenedor
-RUN pip install --no-cache-dir -r requirements.txt
-
-# Copia el código fuente al contenedor
-COPY . .
-
-# Expone el puerto en el que correrá Uvicorn
 EXPOSE 8010
 
-# Ejecuta la aplicación FastAPI
-CMD ["uvicorn", "app.app:app", "--host", "0.0.0.0", "--port", "8010",
+CMD ["uvicorn", "app:app", "--host=0.0.0.0","--port=8010","--reload"]
+
+
+
+
+
+
+
+
