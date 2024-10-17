@@ -9,7 +9,115 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        montserrat: ['var(--font-montserrat)', "Montserrat", "sans-serif"],
+        cabin: ['var(--font-cabin)', "Cabin", "sans-serif"]
+      },
       colors: {
+        "primary-material": {
+          DEFAULT: "#28638a", // rgb(40 99 138) light
+          dark: "#96cdf8" // rgb(150 205 248) dark
+        },
+        "primary-tint": {
+          DEFAULT: "#28638a", // rgb(40 99 138) light
+          dark: "#96cdf8" // rgb(150 205 248) dark
+        },
+        "on-primary": {
+          DEFAULT: "#ffffff", // rgb(255 255 255) light
+          dark: "#00344f" // rgb(0 52 79) dark
+        },
+        "primary-container": {
+          DEFAULT: "#cae6ff", // rgb(202 230 255) light
+          dark: "#004b70" // rgb(0 75 112) dark
+        },
+        "on-primary-container": {
+          DEFAULT: "#001e30", // rgb(0 30 48) light
+          dark: "#cae6ff" // rgb(202 230 255) dark
+        },
+        "secondary-material": {
+          DEFAULT: "#50606e", // rgb(80 96 110) light
+          dark: "#b7c9d9" // rgb(183 201 217) dark
+        },
+        "on-secondary": {
+          DEFAULT: "#ffffff", // rgb(255 255 255) light
+          dark: "#22323f" // rgb(34 50 63) dark
+        },
+        "secondary-container": {
+          DEFAULT: "#d3e5f6", // rgb(211 229 246) light
+          dark: "#384956" // rgb(56 73 86) dark
+        },
+        "on-secondary-container": {
+          DEFAULT: "#0c1d29", // rgb(12 29 41) light
+          dark: "#d3e5f6" // rgb(211 229 246) dark
+        },
+        tertiary: {
+          DEFAULT: "#65587b", // rgb(101 88 123) light
+          dark: "#cfc0ea" // rgb(207 192 232) dark
+        },
+        "on-tertiary": {
+          DEFAULT: "#ffffff", // rgb(255 255 255) light
+          dark: "#362b4a" // rgb(54 43 74) dark
+        },
+        "tertiary-container": {
+          DEFAULT: "#ebddff", // rgb(235 221 255) light
+          dark: "#4d4162" // rgb(77 65 98) dark
+        },
+        "on-tertiary-container": {
+          DEFAULT: "#201634", // rgb(32 22 52) light
+          dark: "#ebddff" // rgb(235 221 255) dark
+        },
+        error: {
+          DEFAULT: "#ba1a1a", // rgb(186 26 26) light
+          dark: "#ffb4ab" // rgb(255 180 171) dark
+        },
+        "on-error": {
+          DEFAULT: "#ffffff", // rgb(255 255 255) light
+          dark: "#690005" // rgb(105 0 5) dark
+        },
+        "error-container": {
+          DEFAULT: "#ffdada", // rgb(255 218 214) light
+          dark: "#93000a" // rgb(147 0 10) dark
+        },
+        "on-error-container": {
+          DEFAULT: "#410002", // rgb(65 0 2) light
+          dark: "#ffdada" // rgb(255 218 214) dark
+        },
+        "background-material": {
+          DEFAULT: "#f7f9ff", // rgb(247 249 255) light
+          dark: "#101417" // rgb(16 20 23) dark
+        },
+        "on-background": {
+          DEFAULT: "#181c20", // rgb(24 28 32) light
+          dark: "#e0e3e8" // rgb(224 227 232) dark
+        },
+        surface: {
+          DEFAULT: "#f7f9ff", // rgb(247 249 255) light
+          dark: "#101417" // rgb(16 20 23) dark
+        },
+        "on-surface": {
+          DEFAULT: "#181c20", // rgb(24 28 32) light
+          dark: "#e0e3e8" // rgb(224 227 232) dark
+        },
+        "surface-variant": {
+          DEFAULT: "#dde3ea", // rgb(221 227 234) light
+          dark: "#41474d" // rgb(65 71 77) dark
+        },
+        "on-surface-variant": {
+          DEFAULT: "#41474d", // rgb(65 71 77) light
+          dark: "#c1c7ce" // rgb(193 199 206) dark
+        },
+        "surface-container": {
+          DEFAULT: "#ebeef3",
+          dark: "#1c2024"
+        },
+        outline: {
+          DEFAULT: "#72787e", // rgb(114 120 126) light
+          dark: "#8b9198" // rgb(139 145 152) dark
+        },
+        shadow: {
+          DEFAULT: "#000000", // rgb(0 0 0) light
+          dark: "#000000" // rgb(0 0 0) dark
+        },
         "cod-gray": {
           "50": "#f6f6f6",
           "100": "#e7e7e7",
@@ -75,7 +183,6 @@ const config: Config = {
           "900": "#3d3d3d",
           "950": "#292929"
         },
-
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         card: {
