@@ -8,7 +8,6 @@ import {
   TableBody,
   TableCaption,
   TableCell,
-  TableHead,
   TableHeader,
   TableRow
 } from "@/components/ui/table";
@@ -27,7 +26,7 @@ import {
 } from "@/components/ui/popover";
 
 export default function Page() {
-  const [exampleData, setExampleData] = useState([
+  const exampleData = [
     {
       Column1: "Value1",
       Column2: "Value2",
@@ -88,7 +87,7 @@ export default function Page() {
       Column9: "Value9",
       Column10: "Value10"
     }
-  ]);
+  ];
 
   const [outcomeVariable, setOutcomeVariable] = useState(null);
   const [predictorVariables, setPredictorVariables] = useState([]);

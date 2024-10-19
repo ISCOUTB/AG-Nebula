@@ -1,26 +1,36 @@
-# Usa una imagen base de Node.js
-FROM node:18-alpine
+FROM node:20-alpine AS base
 
-# Establece el directorio de trabajo
+FROM base AS deps
 WORKDIR /app
 
-# Copia los archivos de dependencias
-COPY package*.json ./
+# Solo copia los archivos de dependencias primero
+COPY package.json package-lock.json ./
 
-# Instala las dependencias de la aplicación
+# Usa npm ci para una instalación más rápida y segura
 RUN npm install
 
-# Copia el código de la aplicación al contenedor
+FROM base AS builder
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Construir la aplicación en modo producción
 RUN npm run build
 
-# Exponer el puerto 3000
+FROM base AS runner
+WORKDIR /app
+
+ENV NODE_ENV production
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
+RUN mkdir .next
+RUN chown nextjs:nodejs .next
+
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+USER nextjs
+
 EXPOSE 3000
-
-# Iniciar la aplicación en modo producción
-CMD ["npm", "run", "start"]
-
-
-
+ENV PORT 3000
+CMD ["node", "server.js"]
