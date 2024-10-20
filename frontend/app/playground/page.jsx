@@ -24,6 +24,7 @@ import {
   PopoverContent,
   PopoverTrigger
 } from "@/components/ui/popover";
+import PreviewTable from "@/components/ui/previewTable";
 
 export default function Page() {
   const exampleData = [
@@ -85,7 +86,7 @@ export default function Page() {
       Column7: "Value7",
       Column8: "Value8",
       Column9: "Value9",
-      Column10: "Value10"
+      Column10: "Value11"
     }
   ];
 
@@ -120,7 +121,7 @@ export default function Page() {
   };
 
   return (
-    <div className="w-svw h-fit flex flex-col p-4 bg-background-material dark:bg-background-material-dark">
+    <div className="w-svw h-svh flex flex-col p-4 bg-background-material dark:bg-background-material-dark overflow-x-hidden">
       <main className="relative h-full">
         <div
           id="fileUploaderContainer"
@@ -141,38 +142,11 @@ export default function Page() {
 
         {/* Data Preview */}
         <div className="mt-6">
-          <Chip className="dark:bg-malibu-900 dark:text-malibu-200 rounded-[8px]">
+          <Chip className="bg-malibu-100 text-malibu-500 dark:bg-malibu-900 dark:text-malibu-200 rounded-[8px]">
             <Table2Icon className="w-4 h-4" />
             Data preview
           </Chip>
-          <Table className="mt-2 dark:bg-[#171C20] dark:text-on-surface-dark rounded-lg">
-            <TableCaption className="font-cabin">
-              This is the first 5 rows of your data
-            </TableCaption>
-            <TableHeader>
-              <TableRow>
-                {Object.keys(exampleData[0]).map(key =>
-                  <TableCell
-                    key={key}
-                    className="font-montserrat font-semibold"
-                  >
-                    {key}
-                  </TableCell>
-                )}
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {exampleData.map((row, index) =>
-                <TableRow key={index}>
-                  {Object.values(row).map((value, index) =>
-                    <TableCell key={index} className="font-cabin">
-                      {value}
-                    </TableCell>
-                  )}
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
+          <PreviewTable data={exampleData}/>
         </div>
 
         {/* Variable Selection Section */}
@@ -185,7 +159,7 @@ export default function Page() {
             Select your predictor variables and outcome variable
           </h2>
 
-          <div className="flex flex-col md:space-x-8 space-y-6">
+          <div className="flex flex-col space-y-6">
             {/* Outcome container */}
             <div className="flex-1">
               <h3 className="font-montserrat font-semibold dark:text-on-surface-dark text-base mb-2">
@@ -195,7 +169,7 @@ export default function Page() {
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select outcome variable" />
                 </SelectTrigger>
-                <SelectContent className="border-0 bg-surface-container text-on-surface dark:bg-surface-container-dark dark:text-on-surface-dark">
+                <SelectContent className="border-0 bg-surface-container text-cabin text-on-surface dark:bg-surface-container-dark dark:text-on-surface-dark">
                   {Object.keys(exampleData[0]).map(key =>
                     <SelectItem key={key} value={key}>
                       {key}
@@ -214,7 +188,7 @@ export default function Page() {
                 {predictorVariables.map(variable =>
                   <div
                     key={variable}
-                    className="flex flex-row items-center justify-center h-10 px-4 border border-primary-material dark:border-primary-material-dark rounded-full"
+                    className="flex flex-row items-center justify-center h-10 pl-6 pr-4 gap-2 font-cabin bg-secondary-container text-on-secondary-container dark:bg-secondary-container-dark dark:text-on-secondary-container-dark dark:border-primary-material-dark rounded-full"
                   >
                     {variable}
                     <XIcon
@@ -228,18 +202,18 @@ export default function Page() {
                     <Button
                       variant="outline"
                       size="icon"
-                      className="rounded-full"
+                      className="bg-surface text-on-surface dark:bg-surface-dark dark:text-on-surface-dark hover:bg-surface hover:text-on-surface-variant rounded-full"
                     >
                       <PlusIcon className="h-4 w-4" />
                     </Button>
                   </PopoverTrigger>
-                  <PopoverContent className="w-48">
+                  <PopoverContent className="w-48 bg-surface-container text-on-surface dark:bg-surface-container-dark dark:text-on-surface-dark">
                     <div className="space-y-2">
                       {availableVariables.map(variable =>
                         <Button
                           key={variable}
                           variant="ghost"
-                          className="w-full justify-start"
+                          className="w-full justify-start hover:bg-secondary-container hover:text-on-secondary-container dark:hover:bg-secondary-container-dark dark:hover:text-on-secondary-container-dark"
                           onClick={() => handleAddPredictorVariable(variable)}
                         >
                           {variable}
@@ -253,7 +227,8 @@ export default function Page() {
           </div>
 
           <Button
-            className="mt-6"
+            className="mt-3 bg-primary-container text-on-primary-container hover:bg-primary-container hover:text-on-primary-container dark:bg-primary-container-dark dark:text-on-primary-container-dark hover:dark:bg-primary-container-dark hover:dark:text-on-primary-container-dark"
+            size={"lg"}
             onClick={handleConfirmSelection}
             disabled={!outcomeVariable || predictorVariables.length === 0}
           >

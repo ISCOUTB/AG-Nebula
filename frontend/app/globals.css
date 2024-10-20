@@ -8,6 +8,26 @@
   }
 }
 
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  @apply bg-surface-variant/60 dark:bg-surface-variant-dark
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  @apply bg-outline/50 dark:bg-outline-dark/50 rounded-sm
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
 @layer base {
   :root {
     /* Adaptación de colores personalizados */
