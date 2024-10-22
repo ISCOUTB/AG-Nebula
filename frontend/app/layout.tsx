@@ -18,7 +18,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={` ${montserrat.variable} ${cabin.variable} antialiased`}>
+      <body className={`dark ${montserrat.variable} ${cabin.variable} antialiased`}>
         {children}
       </body>
     </html>

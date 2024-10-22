@@ -98,21 +98,29 @@ const config: Config = {
           DEFAULT: "#181c20", // rgb(24 28 32) light
           dark: "#e0e3e8" // rgb(224 227 232) dark
         },
-        "surface-variant": {
-          DEFAULT: "#dde3ea", // rgb(221 227 234) light
-          dark: "#41474d" // rgb(65 71 77) dark
-        },
-        "on-surface-variant": {
-          DEFAULT: "#41474d", // rgb(65 71 77) light
-          dark: "#c1c7ce" // rgb(193 199 206) dark
+        "surface-container-low": {
+          DEFAULT: "#f1f4f9",
+          dark: "#181c20" 
         },
         "surface-container": {
           DEFAULT: "#ebeef3",
           dark: "#1c2024"
         },
+        "surface-container-high": {
+          DEFAULT: "#e5e8ed",
+          dark: "#262a2e"
+        },
+        "surface-container-highest": {
+          DEFAULT: "#e0e3e8",
+          dark: "#313539"
+        },
         outline: {
           DEFAULT: "#72787e", // rgb(114 120 126) light
           dark: "#8b9198" // rgb(139 145 152) dark
+        },
+        "outline-variant": {
+          DEFAULT: "#c1c7ce", // rgb(139 145 152) light
+          dark: "#41474d" // rgb(114 120 126) dark
         },
         shadow: {
           DEFAULT: "#000000", // rgb(0 0 0) light
