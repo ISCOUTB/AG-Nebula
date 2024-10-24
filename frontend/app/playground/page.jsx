@@ -1,6 +1,5 @@
 import example from "@/app/data/example.json";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { FilePlusIcon, UploadIcon } from "@radix-ui/react-icons";
 import FileUploader from "@/components/ui/fileuploader";
 import TablePreview from "@/components/ui/tablepreview";
 import VariableSelector from "@/components/ui/variableselector";

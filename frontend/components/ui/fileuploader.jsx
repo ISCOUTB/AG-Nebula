@@ -4,7 +4,6 @@ import { FilePlusIcon } from "@radix-ui/react-icons"
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger
@@ -84,7 +83,7 @@ const FileUploader = () => {
             {file ? (
               <p>Selected file: {file.name}</p>
             ) : (
-              <p className="font-cabin text-on-surface/80 dark:text-on-surface-dark/80">Drag 'n' drop a CSV file here, or click to select one</p>
+              <p className="font-cabin text-on-surface/80 dark:text-on-surface-dark/80">Drag &apos;n&apos; drop a CSV file here, or click to select one</p>
             )}
           </div>
           {error && <p className="text-red-500 mt-2">{error}</p>}
