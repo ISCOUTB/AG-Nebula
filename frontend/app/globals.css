@@ -15,7 +15,7 @@
 
 /* Track */
 ::-webkit-scrollbar-track {
-  @apply bg-surface-variant/60 dark:bg-surface-variant-dark
+  @apply bg-surface-container/60 dark:bg-surface-container-high-dark
 }
 
 /* Handle */
@@ -31,7 +31,7 @@
 @layer base {
   :root {
     /* Adaptación de colores personalizados */
-    --background: 240 100% 97%; /* #f7f9ff */
+    --background: #f7f9ff; /* #f7f9ff */
     --foreground: 210 22% 12%; /* #181c20 */
     --card: 240 100% 97%; /* #f7f9ff */
     --card-foreground: 210 22% 12%; /* #181c20 */
@@ -59,9 +59,9 @@
   }
 
   .dark {
-    --background: 207 100% 12%; /* #101417 */
+    --background: #101417; /* #101417 */
     --foreground: 210 20% 98%; /* #e0e3e8 */
-    --card: 207 100% 12%; /* #101417 */
+    --card: #1c2024; /* #101417 */
     --card-foreground: 210 20% 98%; /* #e0e3e8 */
     --popover: 207 100% 12%; /* #101417 */
     --popover-foreground: 210 20% 98%; /* #e0e3e8 */
