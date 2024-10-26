@@ -4,3 +4,4 @@ pydantic
 #typing
 pandas
 python-multipart
+scikit-learn
