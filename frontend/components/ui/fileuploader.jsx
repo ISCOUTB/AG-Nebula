@@ -38,14 +38,14 @@ const FileUploader = () => {
     formData.append('file', file)
 
     try {
-      const response = await fetch('/upload-csv/', {
+      const response = await fetch('http://127.0.0.1:8000/upload-csv/', {
         method: 'POST',
         body: formData,
       })
 
       if (!response.ok) throw new Error('Upload failed')
 
-      const previewResponse = await fetch('/data-preview/')
+      const previewResponse = await fetch('http://127.0.0.1:8000/data-preview/')
       if (!previewResponse.ok) throw new Error('Failed to fetch preview')
 
       const previewData = await previewResponse.json()
@@ -94,14 +94,6 @@ const FileUploader = () => {
           >
             {uploading ? 'Uploading...' : 'Upload'}
           </Button>
-          {preview && (
-            <div className="mt-4">
-              <h3 className="font-semibold">File Preview:</h3>
-              <pre className="bg-gray-100 p-2 rounded mt-2 overflow-auto max-h-40">
-                {JSON.stringify(preview, null, 2)}
-              </pre>
-            </div>
-          )}
         </DialogContent>
       </Dialog>
     </div>
