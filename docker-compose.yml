@@ -28,7 +28,7 @@ services:
   mongodb:
     image: mongo:latest
     ports:
-      - 27017:27017
+      - 27019:27019
     volumes:
       - mongo_data:/data/db
     container_name: ag-nebula-mongodb
