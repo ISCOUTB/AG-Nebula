@@ -19,7 +19,6 @@ app.add_middleware(
 # Variable global para almacenar el DataFrame
 data_frame = None
 
-
 # Modelo para seleccionar características y etiqueta
 class FeaturesLabel(BaseModel):
     features: list[str]
