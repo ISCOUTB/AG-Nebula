@@ -9,9 +9,9 @@ WORKDIR /app
 COPY requirements.txt ./
 RUN pip3 install -r requirements.txt
 
-EXPOSE 8010
+EXPOSE 8011
 
-CMD ["uvicorn", "app:app", "--host=0.0.0.0","--port=8010","--reload"]
+CMD ["uvicorn", "app:app", "--host=0.0.0.0","--port=8011","--reload"]
 
 
 

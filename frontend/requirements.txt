@@ -1,2 +1,16 @@
 fastapi
 uvicorn
+next
+react
+@radix-ui/react-slot
+@types/react
+@types/node
+react-dom
+typescript
+eslint
+@typescript-eslint/eslint-plugin
+@typescript-eslint/parser
+eslint-config-next
+
+
+
