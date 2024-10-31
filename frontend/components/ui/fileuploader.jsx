@@ -11,6 +11,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { useState, useCallback } from "react"
 import { useDropzone } from "react-dropzone"
+import dataInfoStore from "@/lib/store"
 
 const FileUploader = () => {
   const [file, setFile] = useState(null)
