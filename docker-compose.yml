@@ -21,18 +21,8 @@ services:
     volumes:
       - ./app:/app
     container_name: ag-nebula-app
-
     environment:
       - NODE_ENV=production
-
-  mongodb:
-    image: mongo:latest
-    ports:
-      - 27019:27019
-    volumes:
-      - mongo_data:/data/db
-    container_name: ag-nebula-mongodb
-
 
   postgresql:
     image: postgres:latest
@@ -56,5 +46,4 @@ services:
     container_name: ag-nebula-pgadmin
 
 volumes:
-  mongo_data:
   postgres_data:
