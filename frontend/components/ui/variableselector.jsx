@@ -1,4 +1,5 @@
 "use client";
+import { usePreviewStore } from "@/lib/store";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Select,
@@ -16,7 +17,9 @@ import {
 import { MousePointerClickIcon, PlusIcon } from "lucide-react";
 import { useState, useEffect } from "react";
 
-const VariableSelector = ({ data }) => {
+const VariableSelector = () => {
+  const store = usePreviewStore();
+  const variables = store((state) => state.preview.header);
   const [selectedOutcome, setSelectedOutcome] = useState(null);
   const [selectedPredictors, setSelectedPredictors] = useState([]);
   const [removedPredictors, setRemovedPredictors] = useState([]);
@@ -43,17 +46,28 @@ const VariableSelector = ({ data }) => {
     setSelectedPredictors(prevState => [...prevState, key]);
   };
 
-  useEffect(
-    () => {
+  useEffect(() => {
       if (selectedOutcome) {
-        const allPredictors = Object.keys(data[0]).filter(
+        const allPredictors = variables.filter(
           key => key !== selectedOutcome
         );
         setSelectedPredictors(allPredictors);
         setRemovedPredictors([]);
+
+        fetch("http://127.0.0.1:8000/select-features-label/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            features: allPredictors,
+            label: selectedOutcome
+          })
+        })
+        
       }
     },
-    [selectedOutcome, data]
+    [selectedOutcome, variables]
   );
 
   return (
@@ -67,11 +81,13 @@ const VariableSelector = ({ data }) => {
         </SelectTrigger>
         <SelectContent className="text-3xl dark:bg-secondary-container-dark dark:text-on-secondary-container-dark border-0">
           <SelectGroup>
-            {Object.keys(data[0]).map(key =>
-              <SelectItem key={key} value={key}>
-                {key}
-              </SelectItem>
-            )}
+            {
+              variables?.map((variable) => (
+                <SelectItem key={variable} value={variable}>
+                  {variable}
+                </SelectItem>
+              ))
+            }
           </SelectGroup>
         </SelectContent>
       </Select>
