@@ -27,7 +27,6 @@ const VariableSelector = () => {
   // Handle outcome change
   const handleOutcomeChange = value => {
     setSelectedOutcome(value);
-    console.log("Selected outcome:", value);
   };
 
   // Handle predictor elimination
