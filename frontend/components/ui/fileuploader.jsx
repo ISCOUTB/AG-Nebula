@@ -11,11 +11,13 @@ import {
 import { Button } from "@/components/ui/button"
 import { useState, useCallback } from "react"
 import { useDropzone } from "react-dropzone"
+import { usePreviewStore } from "@/lib/store"
 
 const FileUploader = () => {
   const [file, setFile] = useState(null)
   const [uploading, setUploading] = useState(false)
-  const [setPreview] = useState(null)
+  const store = usePreviewStore();
+  const setPreview = store((state) => state.setPreview)
   const [error, setError] = useState(null)
 
   const onDrop = useCallback((acceptedFiles) => {

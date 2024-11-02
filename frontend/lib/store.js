@@ -1,10 +1,28 @@
-import {create} from "zustand";
+import { create } from 'zustand';
 
-const useDataInfoStore = create((set) => ({
-    dataInfo: [],
-    setDataInfo: (data) => set({dataInfo: data}),
-    updateDataInfo: (data) => set((state) => ({dataInfo: [...state.dataInfo, data]}))
-}))
+// Creamos un store inicializado como null
+let store = null;
 
-export default useDataInfoStore;
+// Función para inicializar el store
+const initStore = (initialState = {}) => {
+  return create((set) => ({
+    preview: [],
+    setPreview: (preview) => set({ preview }),
+    ...initialState,
+  }));
+};
 
+// Función para obtener o inicializar el store
+export const usePreviewStore = (initialState) => {
+  // Para SSR, siempre creamos un nuevo store
+  if (typeof window === 'undefined') {
+    return initStore(initialState);
+  }
+
+  // Para el cliente, creamos el store solo una vez
+  if (!store) {
+    store = initStore(initialState);
+  }
+
+  return store;
+};
