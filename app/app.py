@@ -15,8 +15,6 @@ app.add_middleware(
     allow_headers=["*"],  # Permite todos los headers
 )
 
-# El resto de tu código permanece igual
-# Variable global para almacenar el DataFrame
 data_frame = None
 
 # Modelo para seleccionar características y etiqueta

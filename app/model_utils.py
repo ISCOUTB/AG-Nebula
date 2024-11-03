@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.linear_model import LogisticRegression, LinearRegression
 from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
@@ -12,21 +13,26 @@ from sklearn.linear_model import LogisticRegression, LinearRegression
 from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
 from sklearn.svm import SVC, SVR
 from sklearn.metrics import mean_squared_error, classification_report, r2_score, accuracy_score
-import pandas as pd
-import numpy as np
 
-import pandas as pd
 
 # Cargar CSV y devolver DataFrame
 def load_csv(file) -> pd.DataFrame:
     df = pd.read_csv(file, on_bad_lines='skip', skip_blank_lines=True)
-    df = df.fillna(value='missing_value')  # Reemplazar valores nulos
+    df = df.fillna(value='missing_value') 
     return df
 
-# Obtener las primeras 5 filas de un DataFrame
-def get_header_and_first_rows(df: pd.DataFrame):
-    header = df.columns.tolist()
-    first_rows = df.head(5).to_dict(orient='records')
+# Obtener las 5 primeras filas
+def preprocess_and_get_first_rows(df: pd.DataFrame):
+    X0 = pd.DataFrame() 
+    
+    for col in df.columns:
+        if df[col].dtype.name == 'category' or df[col].dtype == 'object':
+            X0[col] = df[col].astype('category').cat.codes
+        else:
+            X0[col] = df[col]
+
+    header = X0.columns.tolist()
+    first_rows = X0.head(5).to_dict(orient='records')
     return {"header": header, "first_rows": first_rows}
 
 def check_classification_or_regression(df: pd.DataFrame, response_variable: str):
