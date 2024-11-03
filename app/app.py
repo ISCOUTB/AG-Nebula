@@ -38,7 +38,7 @@ async def data_preview():
     if data_frame is None:
         raise HTTPException(status_code=400, detail="No se ha cargado ningún archivo CSV.")
     
-    return model_utils.get_header_and_first_rows(data_frame)
+    return model_utils.preprocess_and_get_first_rows(data_frame)
 
 # Seleccionar características y etiqueta
 @app.post("/select-features-label/")

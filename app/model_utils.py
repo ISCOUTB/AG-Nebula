@@ -78,13 +78,10 @@ def train_model(df: pd.DataFrame, features: list[str], label: str, model_type: s
     X = df[features]
     y = df[label]
 
-    # Codificar las variables categóricas si existen
-    X = pd.get_dummies(X, drop_first=True)
-
     # Dividir el conjunto de datos en entrenamiento y prueba
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
     
-    # Determinar automáticamente si es un problema de clasificación o regresión usando la función
+    # Determinar automáticamente si es un problema de clasificación o regresión
     result = check_classification_or_regression(df, label)
     problem_type = result["variable_type"]
 
@@ -158,17 +155,30 @@ def train_model(df: pd.DataFrame, features: list[str], label: str, model_type: s
         best_model.fit(X_train, y_train)
 
     # Hacer predicciones en el conjunto de prueba
-    y_pred = best_model.predict(X_test)
+    y_pred_test = best_model.predict(X_test)
+    y_pred_train = best_model.predict(X_train)
+    y_pred_full = best_model.predict(X)
 
     # Calcular métricas según el tipo de problema
     if problem_type == "regression":
-        mse = mean_squared_error(y_test, y_pred)
-        r2 = r2_score(y_test, y_pred)
-        metric_result = {"mse": mse, "r2_score": r2}
+        mse_test = mean_squared_error(y_test, y_pred_test)
+        r2_test = r2_score(y_test, y_pred_test)
+        mse_train = mean_squared_error(y_train, y_pred_train)
+        r2_train = r2_score(y_train, y_pred_train)
+        mse_full = mean_squared_error(y, y_pred_full)
+        r2_full = r2_score(y, y_pred_full)
+        metric_result = {
+            "test_metrics": {"mse": mse_test, "r2_score": r2_test},
+            "train_metrics": {"mse": mse_train, "r2_score": r2_train},
+            "full_metrics": {"mse": mse_full, "r2_score": r2_full}
+        }
     else:  # classification
-        accuracy = accuracy_score(y_test, y_pred)
-        report = classification_report(y_test, y_pred, output_dict=True)
-        metric_result = {"accuracy": accuracy, "classification_report": report}
+        accuracy = accuracy_score(y_test, y_pred_test)
+        report = classification_report(y_test, y_pred_test, output_dict=True)
+        metric_result = {
+            "accuracy": accuracy,
+            "classification_report": report
+        }
     
     # Obtener importancia de características (solo para modelos que las soportan)
     if hasattr(best_model, "feature_importances_"):
@@ -177,6 +187,14 @@ def train_model(df: pd.DataFrame, features: list[str], label: str, model_type: s
             "Feature": X.columns,
             "Importance": feature_importances
         }).sort_values(by="Importance", ascending=False)
+        
+        # Visualización de la importancia de las características
+        plt.figure(figsize=(10, 6))
+        sns.barplot(x='Importance', y='Feature', data=feature_importance_df)
+        plt.title('Importancia de Características')
+        plt.xlabel('Importancia')
+        plt.ylabel('Características')
+        plt.show()
     else:
         feature_importance_df = None
 
@@ -186,7 +204,7 @@ def train_model(df: pd.DataFrame, features: list[str], label: str, model_type: s
         "metrics": metric_result,
         "predictions": {
             "y_test": y_test.tolist(),
-            "y_pred": y_pred.tolist()
+            "y_pred_test": y_pred_test.tolist()
         },
         "feature_importance": feature_importance_df.to_dict(orient="records") if feature_importance_df is not None else "No feature importances"
     }
