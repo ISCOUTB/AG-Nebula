@@ -23,7 +23,6 @@ def load_csv(file) -> pd.DataFrame:
     df = df.fillna(value='missing_value') 
     return df
 
-# Obtener las 5 primeras filas
 def preprocess_and_get_first_rows(df: pd.DataFrame):
     X0 = pd.DataFrame() 
     
@@ -33,9 +32,14 @@ def preprocess_and_get_first_rows(df: pd.DataFrame):
         else:
             X0[col] = df[col]
 
-    header = X0.columns.tolist()
-    first_rows = X0.head(5).to_dict(orient='records')
-    return {"header": header, "first_rows": first_rows}
+    # Para el endpoint de data preview
+    if X0 is not None:
+        preview_data = {
+            "header": X0.columns.tolist(),
+            "first_rows": X0.head(5).to_dict(orient='records')
+        }
+        return preview_data, X0
+    return None, None
 
 # Función que determina si el dataframe es de clasificación o de regresión
 def check_classification_or_regression(df, response_variable):
@@ -69,7 +73,7 @@ def check_classification_or_regression(df, response_variable):
 
 def train_model(df: pd.DataFrame, features: list[str], label: str, model_type: str):
     # Preprocesar los datos categórico llamando la función realizada para ello
-    X0 = preprocess_and_get_first_rows(df)
+    _, X0 = preprocess_and_get_first_rows(df)
 
     # Definir X e y usando el DataFrame procesado
     X = X0[features]

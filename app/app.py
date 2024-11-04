@@ -35,13 +35,14 @@ async def upload_csv(file: UploadFile = File(...)):
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Error al cargar el archivo CSV: {e}")
 
-# Obtener cabecera y primeras 5 filas
+# Obtener cabecera y preview de los datos
 @app.get("/data-preview/")
 async def data_preview():
     if data_frame is None:
         raise HTTPException(status_code=400, detail="No se ha cargado ningún archivo CSV.")
     
-    return model_utils.preprocess_and_get_first_rows(data_frame)
+    preview_data, _ = model_utils.preprocess_and_get_first_rows(data_frame)
+    return preview_data
 
 # Seleccionar features y label
 @app.post("/select-features-label/")
@@ -77,34 +78,43 @@ async def analyze_model():
     
     return analysis_result
 
-# Entrenar el modelo con ajuste de hiperparámetros
+# Entrenamiento del modelo
 @app.post("/train-model/")
 async def train_model_endpoint(model_type: str):
     global data_frame, selected_features, selected_label
+    
     if data_frame is None:
-        raise HTTPException(status_code=400, detail="No se ha cargado ningún archivo CSV.")
-
-    # Verificar si se han seleccionado las características y la etiqueta
-    if not isinstance(selected_features, list) or not isinstance(selected_label, str):
-        raise HTTPException(status_code=400, detail="Las características y la etiqueta no se han seleccionado correctamente.")
+        raise HTTPException(
+            status_code=400, 
+            detail="No se ha cargado ningún archivo CSV."
+        )
+    
+    if not selected_features or not selected_label:
+        raise HTTPException(
+            status_code=400,
+            detail="Primero debe seleccionar las características y la etiqueta usando el endpoint /select-features-label/"
+        )
     
     try:
-        # Imprimir los valores seleccionados para depuración
-        print("Características seleccionadas:", selected_features)
-        print("Etiqueta seleccionada:", selected_label)
-
-        # Entrenar el modelo utilizando la función de model_utils
-        model_result = model_utils.train_model(data_frame, selected_features, selected_label, model_type)
+        # Llamar a la función de entrenamiento desde model_utils
+        result = model_utils.train_model(
+            df=data_frame,
+            features=selected_features,
+            label=selected_label,
+            model_type=model_type
+        )
+        
+        # Verificar si hubo algún error en el entrenamiento
+        if "error" in result:
+            raise HTTPException(
+                status_code=400,
+                detail=result["error"]
+            )
+            
+        return result
+        
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error en el entrenamiento del modelo: {str(e)}")
-
-    # Formatear y devolver los resultados del entrenamiento
-    return {
-        "Mejores parámetros": model_result.get("best_params"),
-        "Métricas": model_result.get("metrics"),
-        "Predicciones": {
-            "y_test": model_result.get("predictions").get("y_test"),
-            "y_pred_test": model_result.get("predictions").get("y_pred_test")
-        },
-        "Importancia de características": model_result.get("feature_importance")
-    }
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error durante el entrenamiento del modelo: {str(e)}"
+        )
