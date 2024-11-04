@@ -1,5 +1,7 @@
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
 from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.linear_model import LogisticRegression, LinearRegression
 from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
@@ -35,31 +37,22 @@ def preprocess_and_get_first_rows(df: pd.DataFrame):
     first_rows = X0.head(5).to_dict(orient='records')
     return {"header": header, "first_rows": first_rows}
 
-def check_classification_or_regression(df: pd.DataFrame, response_variable: str):
-    # Verificar si la columna existe
+# Función que determina si el dataframe es de clasificación o de regresión
+def check_classification_or_regression(df, response_variable):
+
+    # Verificar si la columna existe en el DataFrame
     if response_variable not in df.columns:
         return {"error": f"La variable de respuesta '{response_variable}' no existe en el DataFrame."}
 
+    # Verificar el número de valores únicos
     unique_values = df[response_variable].nunique()
-    
-    # Imprimir el tipo de la variable de respuesta y sus primeros valores para depuración
-    print(f"Variable de respuesta: {response_variable}")
-    print(f"Tipo de datos: {df[response_variable].dtype}")
-    print(f"Valores únicos: {unique_values}")
-    print(f"Primeros valores: {df[response_variable].head()}")
+    result = {"variable_type": "", "possible_models": []}
 
-    result = {
-        "variable_type": "",
-        "possible_models": []
-    }
-
-    # Verificar si es un problema de clasificación o regresión
+    # Si tiene menos de 20 valores únicos, puede ser clasificación
     if unique_values <= 20:
         result["variable_type"] = "classification"
         result["possible_models"] = ["LogisticRegression", "DecisionTreeClassifier", "RandomForestClassifier", "SVC"]
-        return result
-
-    if pd.api.types.is_numeric_dtype(df[response_variable]):
+    elif pd.api.types.is_numeric_dtype(df[response_variable]):
         is_integer = df[response_variable].apply(lambda x: float(x).is_integer()).all()
         if is_integer and unique_values <= 20:
             result["variable_type"] = "classification"
@@ -73,10 +66,14 @@ def check_classification_or_regression(df: pd.DataFrame, response_variable: str)
 
     return result
 
-# Función para entrenar el modelo, ajustar hiperparámetros y hacer predicciones
+
 def train_model(df: pd.DataFrame, features: list[str], label: str, model_type: str):
-    X = df[features]
-    y = df[label]
+    # Preprocesar los datos categórico llamando la función realizada para ello
+    X0 = preprocess_and_get_first_rows(df)
+
+    # Definir X e y usando el DataFrame procesado
+    X = X0[features]
+    y = X0[label]
 
     # Dividir el conjunto de datos en entrenamiento y prueba
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
