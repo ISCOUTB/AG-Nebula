@@ -23,6 +23,7 @@ def load_csv(file) -> pd.DataFrame:
     df = df.fillna(value='missing_value') 
     return df
 
+# Preprocesamiento de data y obtención de las primeras filas
 def preprocess_and_get_first_rows(df: pd.DataFrame):
     X0 = pd.DataFrame() 
     
@@ -70,7 +71,7 @@ def check_classification_or_regression(df, response_variable):
 
     return result
 
-
+# Entrenamiento del modelo
 def train_model(df: pd.DataFrame, features: list[str], label: str, model_type: str):
     # Preprocesar los datos categórico llamando la función realizada para ello
     _, X0 = preprocess_and_get_first_rows(df)
