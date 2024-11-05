@@ -1,4 +1,5 @@
 "use client";
+
 import { usePreviewStore } from "@/lib/store";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import {
@@ -16,6 +17,7 @@ import {
 } from "@/components/ui/popover";
 import { MousePointerClickIcon, PlusIcon } from "lucide-react";
 import { useState, useEffect } from "react";
+import { toast } from "@/hooks/use-toast"
 import { Button } from "./button";
 
 const VariableSelector = () => {
@@ -57,6 +59,21 @@ const VariableSelector = () => {
         label: selectedOutcome
       })
     })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error("Error en la solicitud");
+      }
+      return response.json();
+    })
+    .then(data => {
+      toast({
+        variant: "good",
+        description: data.message,
+      })
+    })
+    .catch(error => {
+      console.error("Error:", error);
+    });
   };
 
   useEffect(() => {
@@ -148,7 +165,7 @@ const VariableSelector = () => {
           </div>
         </CardContent>
         <CardFooter className="flex justify-end">
-          <Button onClick={() => sendSelectedPredictors()} className="bg-surface-container-highest-dark text-on-surface-dark" size={'lg'}>
+          <Button onClick={() => sendSelectedPredictors()} className="bg-surface-container dark:bg-surface-container-dark border border-outline-variant dark:border-outline-variant-dark text-on-primary-container dark:text-on-primary-container-dark hover:bg-surface-container-highest dark:hover:bg-surface-container-highest-dark" size={'lg'}>
             Generate Model
           </Button>
         </CardFooter>
