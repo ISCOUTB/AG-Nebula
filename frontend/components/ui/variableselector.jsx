@@ -16,16 +16,19 @@ import {
   PopoverTrigger
 } from "@/components/ui/popover";
 import { MousePointerClickIcon, PlusIcon } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { toast } from "@/hooks/use-toast"
 import { Button } from "./button";
 
 const VariableSelector = () => {
   const store = usePreviewStore();
   const variables = store((state) => state.preview.header);
-  const [selectedOutcome, setSelectedOutcome] = useState(null);
-  const [selectedPredictors, setSelectedPredictors] = useState([]);
-  const [removedPredictors, setRemovedPredictors] = useState([]);
+  const selectedOutcome = store((state) => state.selectedOutcome);
+  const selectedPredictors = store((state) => state.selectedPredictors);
+  const removedPredictors = store((state) => state.removedPredictors);
+  const setSelectedOutcome = store((state) => state.setSelectedOutcome);
+  const setSelectedPredictors = store((state) => state.setSelectedPredictors);
+  const setRemovedPredictors = store((state) => state.setRemovedPredictors);
 
   // Handle outcome change
   const handleOutcomeChange = value => {
@@ -34,18 +37,16 @@ const VariableSelector = () => {
 
   // Handle predictor elimination
   const handlePredictorElimination = key => {
-    setSelectedPredictors(prevState =>
-      prevState.filter(predictor => predictor !== key)
-    );
-    setRemovedPredictors(prevState => [...prevState, key]);
+    const newSelectedPredictors = selectedPredictors.filter(predictor => predictor !== key);
+    setSelectedPredictors(newSelectedPredictors);
+    setRemovedPredictors([...removedPredictors, key]);
   };
 
   // Handle predictor restoration
   const handlePredictorRestoration = key => {
-    setRemovedPredictors(prevState =>
-      prevState.filter(predictor => predictor !== key)
-    );
-    setSelectedPredictors(prevState => [...prevState, key]);
+    const newRemovedPredictors = removedPredictors.filter(predictor => predictor !== key);
+    setRemovedPredictors(newRemovedPredictors);
+    setSelectedPredictors([...selectedPredictors, key]);
   };
 
   const sendSelectedPredictors = () => {
@@ -77,17 +78,12 @@ const VariableSelector = () => {
   };
 
   useEffect(() => {
-      if (selectedOutcome) {
-        const allPredictors = variables.filter(
-          key => key !== selectedOutcome
-        );
-        setSelectedPredictors(allPredictors);
-        setRemovedPredictors([]);
-        
-      }
-    },
-    [selectedOutcome, variables]
-  );
+    if (selectedOutcome) {
+      const allPredictors = variables.filter(key => key !== selectedOutcome);
+      setSelectedPredictors(allPredictors);
+      setRemovedPredictors([]);
+    }
+  }, [selectedOutcome, variables, setSelectedPredictors, setRemovedPredictors]);
 
   return (
     <div className="flex flex-col mt-6 gap-3">
