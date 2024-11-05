@@ -1,6 +1,6 @@
 "use client";
 import { usePreviewStore } from "@/lib/store";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/popover";
 import { MousePointerClickIcon, PlusIcon } from "lucide-react";
 import { useState, useEffect } from "react";
+import { Button } from "./button";
 
 const VariableSelector = () => {
   const store = usePreviewStore();
@@ -45,6 +46,19 @@ const VariableSelector = () => {
     setSelectedPredictors(prevState => [...prevState, key]);
   };
 
+  const sendSelectedPredictors = () => {
+    fetch("http://127.0.0.1:8000/select-features-label/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        features: selectedPredictors,
+        label: selectedOutcome
+      })
+    })
+  };
+
   useEffect(() => {
       if (selectedOutcome) {
         const allPredictors = variables.filter(
@@ -52,17 +66,6 @@ const VariableSelector = () => {
         );
         setSelectedPredictors(allPredictors);
         setRemovedPredictors([]);
-
-        fetch("http://127.0.0.1:8000/select-features-label/", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            features: allPredictors,
-            label: selectedOutcome
-          })
-        })
         
       }
     },
@@ -102,7 +105,7 @@ const VariableSelector = () => {
               <div
                 key={key}
                 onClick={() => handlePredictorElimination(key)}
-                className="grid place-items-center w-fit h-8 px-4 bg-surface-container-high-dark font-cabin text-sm rounded-lg cursor-pointer"
+                className="grid place-items-center w-fit h-8 px-4 bg-surface-container-high-dark font-cabin text-sm hover:scale-105 rounded-lg transition-all cursor-pointer"
               >
                 {key}
               </div>
@@ -144,6 +147,11 @@ const VariableSelector = () => {
             </Popover>
           </div>
         </CardContent>
+        <CardFooter className="flex justify-end">
+          <Button onClick={() => sendSelectedPredictors()} className="bg-surface-container-highest-dark text-on-surface-dark" size={'lg'}>
+            Generate Model
+          </Button>
+        </CardFooter>
       </Card>
     </div>
   );

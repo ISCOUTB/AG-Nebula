@@ -5,7 +5,6 @@ import { usePreviewStore } from "@/lib/store";
 import FileUploader from "@/components/ui/fileuploader";
 import TablePreview from "@/components/ui/tablepreview";
 import VariableSelector from "@/components/ui/variableselector";
-import { motion } from "framer-motion";
 
 const ModelGenerator = () => {
   const preview = usePreviewStore((state) => state.preview);
