@@ -90,7 +90,7 @@ const FileUploader = () => {
               </p>
             ) : (
               <p className="font-cabin text-on-surface/80 dark:text-on-surface-dark/80">
-                Drag 'n' drop a CSV file here, or click to select one
+                Drag &apos;n&apos; drop a CSV file here, or click to select one
               </p>
             )}
           </div>
