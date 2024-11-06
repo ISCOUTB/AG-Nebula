@@ -15,14 +15,15 @@ app.add_middleware(
     allow_headers=["*"],  # Permite todos los headers
 )
 
-# El resto de tu código permanece igual
-# Variable global para almacenar el DataFrame
 data_frame = None
 
 # Modelo para seleccionar características y etiqueta
 class FeaturesLabel(BaseModel):
     features: list[str]
     label: str
+
+selected_features = []
+selected_label = ''
 
 # Cargar un archivo CSV
 @app.post("/upload-csv/")
@@ -34,18 +35,19 @@ async def upload_csv(file: UploadFile = File(...)):
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Error al cargar el archivo CSV: {e}")
 
-# Obtener cabecera y primeras 5 filas
+# Obtener cabecera y preview de los datos
 @app.get("/data-preview/")
 async def data_preview():
     if data_frame is None:
         raise HTTPException(status_code=400, detail="No se ha cargado ningún archivo CSV.")
     
-    return model_utils.get_header_and_first_rows(data_frame)
+    preview_data, _ = model_utils.preprocess_and_get_first_rows(data_frame)
+    return preview_data
 
-# Seleccionar características y etiqueta
+# Seleccionar features y label
 @app.post("/select-features-label/")
 async def select_features_label(features_label: FeaturesLabel):
-    global data_frame
+    global selected_features, selected_label
     if data_frame is None:
         raise HTTPException(status_code=400, detail="No se ha cargado ningún archivo CSV.")
     
@@ -59,33 +61,60 @@ async def select_features_label(features_label: FeaturesLabel):
     if label not in data_frame.columns:
         raise HTTPException(status_code=400, detail=f"La etiqueta '{label}' no existe en el DataFrame.")
     
+    # Asignar las características y etiqueta seleccionadas
+    selected_features = features
+    selected_label = label
     return {"message": "Características y etiqueta seleccionadas correctamente."}
 
 # Análisis de modelo
 @app.post("/analyze-model/")
-async def analyze_model(features_label: FeaturesLabel):
-    global data_frame
-    if data_frame is None:
-        raise HTTPException(status_code=400, detail="No se ha cargado ningún archivo CSV.")
+async def analyze_model():
+    global selected_features, selected_label
+    if not selected_features or not selected_label:
+        raise HTTPException(status_code=400, detail="Las características y la etiqueta no han sido seleccionadas.")
     
-    label = features_label.label
-
     # Llamar a la función para analizar la variable de respuesta
-    analysis_result = model_utils.check_classification_or_regression(data_frame, label)
+    analysis_result = model_utils.check_classification_or_regression(data_frame, selected_label)
     
     return analysis_result
 
-# Entrenar el modelo con ajuste de hiperparámetros
+# Entrenamiento del modelo
 @app.post("/train-model/")
-async def train_model(features_label: FeaturesLabel, model_type: str):
-    global data_frame
+async def train_model_endpoint(model_type: str):
+    global data_frame, selected_features, selected_label
+    
     if data_frame is None:
-        raise HTTPException(status_code=400, detail="No se ha cargado ningún archivo CSV.")
+        raise HTTPException(
+            status_code=400, 
+            detail="No se ha cargado ningún archivo CSV."
+        )
     
-    features = features_label.features
-    label = features_label.label
-
-    # Entrenar el modelo utilizando la función de model_utils
-    model_result = model_utils.train_model(data_frame, features, label, model_type)
+    if not selected_features or not selected_label:
+        raise HTTPException(
+            status_code=400,
+            detail="Primero debe seleccionar las características y la etiqueta usando el endpoint /select-features-label/"
+        )
     
-    return model_result
+    try:
+        # Llamar a la función de entrenamiento desde model_utils
+        result = model_utils.train_model(
+            df=data_frame,
+            features=selected_features,
+            label=selected_label,
+            model_type=model_type
+        )
+        
+        # Verificar si hubo algún error en el entrenamiento
+        if "error" in result:
+            raise HTTPException(
+                status_code=400,
+                detail=result["error"]
+            )
+            
+        return result
+        
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error durante el entrenamiento del modelo: {str(e)}"
+        )
