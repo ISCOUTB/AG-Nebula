@@ -12,6 +12,8 @@ const initStore = (initialState = {}) => {
     setSelectedPredictors: (predictors) => set({ selectedPredictors: predictors }),
     removedPredictors: [],
     setRemovedPredictors: (predictors) => set({ removedPredictors: predictors }),
+    selectedModel: null,
+    setSelectedModel: (model) => set({ selectedModel: model }),
     ...initialState,
   }));
 };

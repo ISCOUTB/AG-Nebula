@@ -3,7 +3,7 @@ import FileUploader from "@/components/ui/fileuploader";
 import TablePreview from "@/components/ui/tablepreview";
 import VariableSelector from "@/components/ui/variableselector";
 import ModelSelector from "@/components/ui/modelselector";
-
+import ModelResults from "@/components/ui/modelresults";
 const ModelGenerator = () => {
   const preview = usePreviewStore((state) => state.preview);
 
@@ -15,6 +15,7 @@ const ModelGenerator = () => {
         </div>
         <VariableSelector />
         <ModelSelector />
+        <ModelResults />
       </div>
       <div className="w-full h-fit">
         <FileUploader />
