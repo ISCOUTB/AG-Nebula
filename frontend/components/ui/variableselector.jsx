@@ -16,7 +16,7 @@ import {
   PopoverTrigger
 } from "@/components/ui/popover";
 import { MousePointerClickIcon, PlusIcon } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "@/hooks/use-toast"
 import { Button } from "./button";
 
