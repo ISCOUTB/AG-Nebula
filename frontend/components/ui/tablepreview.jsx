@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { usePreviewStore } from "@/lib/store";
 import {
   Card,
@@ -18,7 +18,7 @@ import {
 
 const TablePreview = () => {
   const store = usePreviewStore();
-  const preview = store((state) => state.preview.first_rows);
+  const preview = store((state) => state.preview?.first_rows || []);
 
   return (
     <div className="mt-6">
@@ -29,7 +29,9 @@ const TablePreview = () => {
         </CardHeader>
         <CardContent>
           {!preview || preview.length === 0 ? (
-            <div className="font-cabin font-normal dark:bg-surface-container-highest-dark dark:text-on-surface-dark rounded-lg p-2">No data available for preview</div>
+            <div className="font-cabin font-normal dark:bg-surface-container-highest-dark dark:text-on-surface-dark rounded-lg p-2">
+              No data available for preview
+            </div>
           ) : (
             <Table>
               <TableHeader>

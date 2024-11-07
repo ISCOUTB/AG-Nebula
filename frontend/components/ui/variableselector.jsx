@@ -16,7 +16,7 @@ import {
   PopoverTrigger
 } from "@/components/ui/popover";
 import { MousePointerClickIcon, PlusIcon } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "@/hooks/use-toast"
 import { Button } from "./button";
 
@@ -30,34 +30,41 @@ const VariableSelector = () => {
   const setSelectedPredictors = store((state) => state.setSelectedPredictors);
   const setRemovedPredictors = store((state) => state.setRemovedPredictors);
 
-  // Handle outcome change
+  const [tempOutcome, setTempOutcome] = useState(selectedOutcome);
+  const [tempPredictors, setTempPredictors] = useState(selectedPredictors);
+
+  // Handle temporary outcome change
   const handleOutcomeChange = value => {
-    setSelectedOutcome(value);
+    setTempOutcome(value);
+    const allPredictors = variables.filter(key => key !== value);
+    setTempPredictors(allPredictors);
   };
 
-  // Handle predictor elimination
+  // Handle predictor elimination from temp state
   const handlePredictorElimination = key => {
-    const newSelectedPredictors = selectedPredictors.filter(predictor => predictor !== key);
-    setSelectedPredictors(newSelectedPredictors);
+    setTempPredictors(tempPredictors.filter(predictor => predictor !== key));
     setRemovedPredictors([...removedPredictors, key]);
   };
 
-  // Handle predictor restoration
+  // Handle predictor restoration to temp state
   const handlePredictorRestoration = key => {
-    const newRemovedPredictors = removedPredictors.filter(predictor => predictor !== key);
-    setRemovedPredictors(newRemovedPredictors);
-    setSelectedPredictors([...selectedPredictors, key]);
+    setRemovedPredictors(removedPredictors.filter(predictor => predictor !== key));
+    setTempPredictors([...tempPredictors, key]);
   };
 
+  // Send selected predictors and outcome to the server
   const sendSelectedPredictors = () => {
+    setSelectedOutcome(tempOutcome);
+    setSelectedPredictors(tempPredictors);
+
     fetch("http://127.0.0.1:8000/select-features-label/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        features: selectedPredictors,
-        label: selectedOutcome
+        features: tempPredictors,
+        label: tempOutcome
       })
     })
     .then(response => {
@@ -70,20 +77,12 @@ const VariableSelector = () => {
       toast({
         variant: "good",
         description: data.message,
-      })
+      });
     })
     .catch(error => {
       console.error("Error:", error);
     });
   };
-
-  useEffect(() => {
-    if (selectedOutcome) {
-      const allPredictors = variables.filter(key => key !== selectedOutcome);
-      setSelectedPredictors(allPredictors);
-      setRemovedPredictors([]);
-    }
-  }, [selectedOutcome, variables, setSelectedPredictors, setRemovedPredictors]);
 
   return (
     <div className="flex flex-col mt-6 gap-3">
@@ -96,13 +95,11 @@ const VariableSelector = () => {
         </SelectTrigger>
         <SelectContent className="text-3xl dark:bg-secondary-container-dark dark:text-on-secondary-container-dark border-0">
           <SelectGroup>
-            {
-              variables?.map((variable) => (
-                <SelectItem key={variable} value={variable}>
-                  {variable}
-                </SelectItem>
-              ))
-            }
+            {variables?.map((variable) => (
+              <SelectItem key={variable} value={variable}>
+                {variable}
+              </SelectItem>
+            ))}
           </SelectGroup>
         </SelectContent>
       </Select>
@@ -114,7 +111,7 @@ const VariableSelector = () => {
         </CardHeader>
         <CardContent>
           <div className="flex w-full max-h-48 flex-wrap gap-2 overflow-y-scroll">
-            {selectedPredictors.map(key =>
+            {tempPredictors.map(key => (
               <div
                 key={key}
                 onClick={() => handlePredictorElimination(key)}
@@ -122,7 +119,7 @@ const VariableSelector = () => {
               >
                 {key}
               </div>
-            )}
+            ))}
           </div>
           <div className="mt-2">
             <Popover>
@@ -140,7 +137,7 @@ const VariableSelector = () => {
                   </CardHeader>
                   <CardContent>
                     <div className="flex flex-wrap gap-2">
-                      {removedPredictors.map(key =>
+                      {removedPredictors.map(key => (
                         <div
                           key={key}
                           onClick={() => handlePredictorRestoration(key)}
@@ -148,7 +145,7 @@ const VariableSelector = () => {
                         >
                           {key}
                         </div>
-                      )}
+                      ))}
                     </div>
                     {removedPredictors.length === 0 &&
                       <p className="font-cabin text-sm text-on-surface dark:text-on-surface-dark/60">
@@ -161,8 +158,12 @@ const VariableSelector = () => {
           </div>
         </CardContent>
         <CardFooter className="flex justify-end">
-          <Button onClick={() => sendSelectedPredictors()} className="bg-surface-container dark:bg-surface-container-dark border border-outline-variant dark:border-outline-variant-dark text-on-primary-container dark:text-on-primary-container-dark hover:bg-surface-container-highest dark:hover:bg-surface-container-highest-dark" size={'lg'}>
-            Generate Model
+          <Button
+            onClick={sendSelectedPredictors}
+            className="bg-surface-container dark:bg-surface-container-dark border border-outline-variant dark:border-outline-variant-dark text-on-primary-container dark:text-on-primary-container-dark hover:bg-surface-container-highest dark:hover:bg-surface-container-highest-dark"
+            size="lg"
+          >
+            Send variables
           </Button>
         </CardFooter>
       </Card>
