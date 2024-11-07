@@ -2,7 +2,9 @@ import FileUploader from "@/components/ui/fileuploader";
 import TablePreview from "@/components/ui/tablepreview";
 import VariableSelector from "@/components/ui/variableselector";
 import ModelSelector from "@/components/ui/modelselector";
-import ModelResults from "@/components/ui/modelresults";
+import ModelResult from "@/components/ui/modelresult";
+
+
 const ModelGenerator = () => {
   return (
     <div className="w-full h-[91svh] relative flex flex-col mt-3 gap-3">
@@ -12,7 +14,7 @@ const ModelGenerator = () => {
         </div>
         <VariableSelector />
         <ModelSelector />
-        <ModelResults />
+        <ModelResult />
       </div>
       <div className="w-full h-fit">
         <FileUploader />
