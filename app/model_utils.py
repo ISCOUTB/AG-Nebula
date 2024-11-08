@@ -23,24 +23,18 @@ def load_csv(file) -> pd.DataFrame:
     df = df.fillna(value='missing_value') 
     return df
 
-# Preprocesamiento de data y obtención de las primeras filas
-def preprocess_and_get_first_rows(df: pd.DataFrame):
-    X0 = pd.DataFrame() 
+# Preprocesamiento de la data para el entrenamiento de los datos
+def preprocess_for_training(df: pd.DataFrame) -> pd.DataFrame:
+    X_processed = pd.DataFrame() 
     
     for col in df.columns:
+        # Convierte columnas categóricas en códigos numéricos
         if df[col].dtype.name == 'category' or df[col].dtype == 'object':
-            X0[col] = df[col].astype('category').cat.codes
+            X_processed[col] = df[col].astype('category').cat.codes
         else:
-            X0[col] = df[col]
-
-    # Para el endpoint de data preview
-    if X0 is not None:
-        preview_data = {
-            "header": X0.columns.tolist(),
-            "first_rows": X0.head(5).to_dict(orient='records')
-        }
-        return preview_data, X0
-    return None, None
+            X_processed[col] = df[col]
+            
+    return X_processed
 
 # Función que determina si el dataframe es de clasificación o de regresión
 def check_classification_or_regression(df, response_variable):
@@ -74,11 +68,11 @@ def check_classification_or_regression(df, response_variable):
 # Entrenamiento del modelo
 def train_model(df: pd.DataFrame, features: list[str], label: str, model_type: str):
     # Preprocesar los datos categórico llamando la función realizada para ello
-    _, X0 = preprocess_and_get_first_rows(df)
+    X_processed = preprocess_for_training(df)
 
     # Definir X e y usando el DataFrame procesado
-    X = X0[features]
-    y = X0[label]
+    X = X_processed[features]
+    y = X_processed[label]
 
     # Dividir el conjunto de datos en entrenamiento y prueba
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
