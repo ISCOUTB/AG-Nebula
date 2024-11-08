@@ -35,13 +35,13 @@ async def upload_csv(file: UploadFile = File(...)):
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Error al cargar el archivo CSV: {e}")
 
-# Obtener cabecera y preview de los datos
-@app.get("/data-preview/")
-async def data_preview():
-    if data_frame is None:
-        raise HTTPException(status_code=400, detail="No se ha cargado ningún archivo CSV.")
-    
-    preview_data, _ = model_utils.preprocess_and_get_first_rows(data_frame)
+# Obtencion de solo las primeras filas del DataFrame 
+@app.get("/data-preview")
+def data_preview():
+    preview_data = {
+        "header": data_frame.columns.tolist(),
+        "first_rows": data_frame.head(5).to_dict(orient='records')
+    }
     return preview_data
 
 # Seleccionar features y label
