@@ -190,13 +190,6 @@ def train_model(df: pd.DataFrame, features: list[str], label: str, model_type: s
             "Importance": feature_importances
         }).sort_values(by="Importance", ascending=False)
         
-        # Visualización de la importancia de las características
-        plt.figure(figsize=(10, 6))
-        sns.barplot(x='Importance', y='Feature', data=feature_importance_df)
-        plt.title('Importancia de Características')
-        plt.xlabel('Importancia')
-        plt.ylabel('Características')
-        plt.show()
     else:
         feature_importance_df = None
 
