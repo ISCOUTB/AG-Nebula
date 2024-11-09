@@ -19,6 +19,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       // Para otras rutas, permitir el acceso por defecto
       return true
     },
+    signIn: async ({ user, account, profile, email, credentials }) => {
+      // Aquí puedes agregar lógica adicional si es necesario
+      return true
+    },
+    redirect: async ({ url, baseUrl }) => {
+      // Redirigir a /playground después del inicio de sesión
+      return `${baseUrl}/playground`
+    },
   },
 
   pages: {
