@@ -1,4 +1,7 @@
 import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
 from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.linear_model import LogisticRegression, LinearRegression
 from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
@@ -12,48 +15,43 @@ from sklearn.linear_model import LogisticRegression, LinearRegression
 from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
 from sklearn.svm import SVC, SVR
 from sklearn.metrics import mean_squared_error, classification_report, r2_score, accuracy_score
-import pandas as pd
-import numpy as np
 
-import pandas as pd
 
 # Cargar CSV y devolver DataFrame
 def load_csv(file) -> pd.DataFrame:
     df = pd.read_csv(file, on_bad_lines='skip', skip_blank_lines=True)
-    df = df.fillna(value='missing_value')  # Reemplazar valores nulos
+    df = df.fillna(value='missing_value') 
     return df
 
-# Obtener las primeras 5 filas de un DataFrame
-def get_header_and_first_rows(df: pd.DataFrame):
-    header = df.columns.tolist()
-    first_rows = df.head(5).to_dict(orient='records')
-    return {"header": header, "first_rows": first_rows}
+# Preprocesamiento de la data para el entrenamiento de los datos
+def preprocess_for_training(df: pd.DataFrame) -> pd.DataFrame:
+    X_processed = pd.DataFrame() 
+    
+    for col in df.columns:
+        # Convierte columnas categóricas en códigos numéricos
+        if df[col].dtype.name == 'category' or df[col].dtype == 'object':
+            X_processed[col] = df[col].astype('category').cat.codes
+        else:
+            X_processed[col] = df[col]
+            
+    return X_processed
 
-def check_classification_or_regression(df: pd.DataFrame, response_variable: str):
-    # Verificar si la columna existe
+# Función que determina si el dataframe es de clasificación o de regresión
+def check_classification_or_regression(df, response_variable):
+
+    # Verificar si la columna existe en el DataFrame
     if response_variable not in df.columns:
         return {"error": f"La variable de respuesta '{response_variable}' no existe en el DataFrame."}
 
+    # Verificar el número de valores únicos
     unique_values = df[response_variable].nunique()
-    
-    # Imprimir el tipo de la variable de respuesta y sus primeros valores para depuración
-    print(f"Variable de respuesta: {response_variable}")
-    print(f"Tipo de datos: {df[response_variable].dtype}")
-    print(f"Valores únicos: {unique_values}")
-    print(f"Primeros valores: {df[response_variable].head()}")
+    result = {"variable_type": "", "possible_models": []}
 
-    result = {
-        "variable_type": "",
-        "possible_models": []
-    }
-
-    # Verificar si es un problema de clasificación o regresión
+    # Si tiene menos de 20 valores únicos, puede ser clasificación
     if unique_values <= 20:
         result["variable_type"] = "classification"
         result["possible_models"] = ["LogisticRegression", "DecisionTreeClassifier", "RandomForestClassifier", "SVC"]
-        return result
-
-    if pd.api.types.is_numeric_dtype(df[response_variable]):
+    elif pd.api.types.is_numeric_dtype(df[response_variable]):
         is_integer = df[response_variable].apply(lambda x: float(x).is_integer()).all()
         if is_integer and unique_values <= 20:
             result["variable_type"] = "classification"
@@ -67,18 +65,19 @@ def check_classification_or_regression(df: pd.DataFrame, response_variable: str)
 
     return result
 
-# Función para entrenar el modelo, ajustar hiperparámetros y hacer predicciones
+# Entrenamiento del modelo
 def train_model(df: pd.DataFrame, features: list[str], label: str, model_type: str):
-    X = df[features]
-    y = df[label]
+    # Preprocesar los datos categórico llamando la función realizada para ello
+    X_processed = preprocess_for_training(df)
 
-    # Codificar las variables categóricas si existen
-    X = pd.get_dummies(X, drop_first=True)
+    # Definir X e y usando el DataFrame procesado
+    X = X_processed[features]
+    y = X_processed[label]
 
     # Dividir el conjunto de datos en entrenamiento y prueba
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
     
-    # Determinar automáticamente si es un problema de clasificación o regresión usando la función
+    # Determinar automáticamente si es un problema de clasificación o regresión
     result = check_classification_or_regression(df, label)
     problem_type = result["variable_type"]
 
@@ -152,17 +151,30 @@ def train_model(df: pd.DataFrame, features: list[str], label: str, model_type: s
         best_model.fit(X_train, y_train)
 
     # Hacer predicciones en el conjunto de prueba
-    y_pred = best_model.predict(X_test)
+    y_pred_test = best_model.predict(X_test)
+    y_pred_train = best_model.predict(X_train)
+    y_pred_full = best_model.predict(X)
 
     # Calcular métricas según el tipo de problema
     if problem_type == "regression":
-        mse = mean_squared_error(y_test, y_pred)
-        r2 = r2_score(y_test, y_pred)
-        metric_result = {"mse": mse, "r2_score": r2}
+        mse_test = mean_squared_error(y_test, y_pred_test)
+        r2_test = r2_score(y_test, y_pred_test)
+        mse_train = mean_squared_error(y_train, y_pred_train)
+        r2_train = r2_score(y_train, y_pred_train)
+        mse_full = mean_squared_error(y, y_pred_full)
+        r2_full = r2_score(y, y_pred_full)
+        metric_result = {
+            "test_metrics": {"mse": mse_test, "r2_score": r2_test},
+            "train_metrics": {"mse": mse_train, "r2_score": r2_train},
+            "full_metrics": {"mse": mse_full, "r2_score": r2_full}
+        }
     else:  # classification
-        accuracy = accuracy_score(y_test, y_pred)
-        report = classification_report(y_test, y_pred, output_dict=True)
-        metric_result = {"accuracy": accuracy, "classification_report": report}
+        accuracy = accuracy_score(y_test, y_pred_test)
+        report = classification_report(y_test, y_pred_test, output_dict=True)
+        metric_result = {
+            "accuracy": accuracy,
+            "classification_report": report
+        }
     
     # Obtener importancia de características (solo para modelos que las soportan)
     if hasattr(best_model, "feature_importances_"):
@@ -171,6 +183,7 @@ def train_model(df: pd.DataFrame, features: list[str], label: str, model_type: s
             "Feature": X.columns,
             "Importance": feature_importances
         }).sort_values(by="Importance", ascending=False)
+        
     else:
         feature_importance_df = None
 
@@ -180,7 +193,7 @@ def train_model(df: pd.DataFrame, features: list[str], label: str, model_type: s
         "metrics": metric_result,
         "predictions": {
             "y_test": y_test.tolist(),
-            "y_pred": y_pred.tolist()
+            "y_pred_test": y_pred_test.tolist()
         },
         "feature_importance": feature_importance_df.to_dict(orient="records") if feature_importance_df is not None else "No feature importances"
     }

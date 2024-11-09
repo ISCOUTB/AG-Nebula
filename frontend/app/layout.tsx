@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Montserrat, Cabin} from "next/font/google";
 import "./globals.css";
+import { Toaster } from "@/components/ui/toaster";
 
 const montserrat = Montserrat({ subsets: ["latin"], variable: '--font-montserrat' });
 const cabin = Cabin({ subsets: ["latin"], variable: '--font-cabin' });
@@ -20,6 +21,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`dark ${montserrat.variable} ${cabin.variable} antialiased`}>
         {children}
+        <Toaster />
       </body>
     </html>
   );
