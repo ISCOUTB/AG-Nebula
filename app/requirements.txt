@@ -5,3 +5,5 @@ pydantic
 pandas
 python-multipart
 scikit-learn
+matplotlib
+seaborn 

@@ -23,6 +23,7 @@
     "framer-motion": "^11.11.9",
     "lucide-react": "^0.451.0",
     "next": "14.2.15",
+    "next-auth": "^5.0.0-beta.25",
     "react": "latest",
     "react-dom": "latest",
     "react-dropzone": "^14.2.10",
