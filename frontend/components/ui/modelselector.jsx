@@ -21,6 +21,7 @@ const ModelSelector = () => {
   const scrollContainerRef = useRef(null);
   const [possibleModels, setPossibleModels] = useState([]);
   const [isVisible, setIsVisible] = useState(false);
+  console.log(possibleModels)
 
   const scroll = (direction) => {
     if (scrollContainerRef.current) {
@@ -85,12 +86,12 @@ const ModelSelector = () => {
                   possibleModels.map((model, index) => (
                     <Card
                       key={index}
-                      onClick={() => handleModelSelection(model)}
+                      onClick={() => handleModelSelection(model.name)}
                       className="flex-shrink-0 min-w-80 shadow-none dark:bg-surface-container-high-dark"
                     >
                       <CardHeader>
-                        <CardTitle>{model}</CardTitle>
-                        <CardDescription className="max-w-96">{model}</CardDescription>
+                        <CardTitle>{model.name}</CardTitle>
+                        <CardDescription className="max-w-96">{model.description}</CardDescription>
                       </CardHeader>
                       <CardContent>
                         <Button className="bg-surface-container-high-dark border text-on-primary-container-dark border-outline-variant-dark">
