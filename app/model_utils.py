@@ -37,7 +37,18 @@ def preprocess_for_training(df: pd.DataFrame) -> pd.DataFrame:
     return X_processed
 
 # Función que determina si el dataframe es de clasificación o de regresión
-def check_classification_or_regression(df, response_variable):
+def check_classification_or_regression(df: pd.DataFrame, response_variable: str):
+    # Diccionario con descripciones breves para cada modelo
+    model_descriptions = {
+        "LinearRegression": "A linear regression model is a linear approach to modeling the relationship between a scalar response (or dependent variable) and one or more explanatory variables (or independent variables).",
+        "LogisticRegression": "Logistic regression is a statistical model that in its basic form uses a logistic function to model a binary dependent variable, although many more complex extensions exist.",
+        "DecisionTreeClassifier": "A classification model that uses a decision tree structure to make predictions based on feature values.",
+        "RandomForestClassifier": "An ensemble method that combines multiple decision trees to improve accuracy and reduce overfitting in classification tasks.",
+        "SVC": "Support Vector Classification that separates classes with a hyperplane and can use different kernels for complex boundaries.",
+        "DecisionTreeRegressor": "A regression model that uses a decision tree to predict continuous values by partitioning the data.",
+        "RandomForestRegressor": "An ensemble of decision trees for regression that enhances accuracy and reduces overfitting.",
+        "SVR": "Support Vector Regression that predicts continuous outputs using support vector machines with various kernels."
+    }
 
     # Verificar si la columna existe en el DataFrame
     if response_variable not in df.columns:
@@ -47,23 +58,32 @@ def check_classification_or_regression(df, response_variable):
     unique_values = df[response_variable].nunique()
     result = {"variable_type": "", "possible_models": []}
 
-    # Si tiene menos de 20 valores únicos, puede ser clasificación
+    # Determinar si es clasificación o regresión
     if unique_values <= 20:
         result["variable_type"] = "classification"
-        result["possible_models"] = ["LogisticRegression", "DecisionTreeClassifier", "RandomForestClassifier", "SVC"]
+        result["possible_models"] = [{"name": model, "description": model_descriptions[model]}
+                                     for model in ["LogisticRegression", "DecisionTreeClassifier", 
+                                                   "RandomForestClassifier", "SVC"]]
     elif pd.api.types.is_numeric_dtype(df[response_variable]):
         is_integer = df[response_variable].apply(lambda x: float(x).is_integer()).all()
         if is_integer and unique_values <= 20:
             result["variable_type"] = "classification"
-            result["possible_models"] = ["LogisticRegression", "DecisionTreeClassifier", "RandomForestClassifier", "SVC"]
+            result["possible_models"] = [{"name": model, "description": model_descriptions[model]}
+                                         for model in ["LogisticRegression", "DecisionTreeClassifier", 
+                                                       "RandomForestClassifier", "SVC"]]
         else:
             result["variable_type"] = "regression"
-            result["possible_models"] = ["LinearRegression", "DecisionTreeRegressor", "RandomForestRegressor", "SVR"]
+            result["possible_models"] = [{"name": model, "description": model_descriptions[model]}
+                                         for model in ["LinearRegression", "DecisionTreeRegressor", 
+                                                       "RandomForestRegressor", "SVR"]]
     else:
         result["variable_type"] = "classification"
-        result["possible_models"] = ["LogisticRegression", "DecisionTreeClassifier", "RandomForestClassifier", "SVC"]
+        result["possible_models"] = [{"name": model, "description": model_descriptions[model]}
+                                     for model in ["LogisticRegression", "DecisionTreeClassifier", 
+                                                   "RandomForestClassifier", "SVC"]]
 
     return result
+
 
 # Entrenamiento del modelo
 def train_model(df: pd.DataFrame, features: list[str], label: str, model_type: str):
