@@ -1,5 +1,6 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+
 import SessionHistory from "@/components/ui/sessionhistory";
+import SessionManager from "@/components/ui/sessionmanager";
 import { auth } from "@/lib/auth/authConfig";
 
 
@@ -10,10 +11,7 @@ const UserNavbar = async () => {
       <div>
         <SessionHistory email={session.user.email}/>
       </div>
-      <Avatar>
-        <AvatarImage src={session.user.image} />
-        <AvatarFallback>User</AvatarFallback>
-      </Avatar>
+      <SessionManager session={session}/>
     </div>
   );
 };
