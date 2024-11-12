@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import SignInButton from "@/components/landing/signInButton";
 
 export default function Home() {
   return (
@@ -22,11 +22,7 @@ export default function Home() {
               you to make the best conclusions
             </p>
             <div className="flex justify-center gap-2 mt-6">
-              <Link href="/playground">
-                <Button size="lg" className="bg-white font-cabin font-normal">
-                  Get Started
-                </Button>
-              </Link>
+              <SignInButton />
 
               <Button
                 size="lg"

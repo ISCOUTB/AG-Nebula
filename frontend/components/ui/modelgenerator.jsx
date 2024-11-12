@@ -8,7 +8,7 @@ import ModelSelector from "@/components/ui/modelselector";
 import ModelResult from "@/components/ui/modelresult";
 import { usePreviewStore } from "@/lib/store";
 
-const ModelGenerator = () => {
+const ModelGenerator = ({email}) => {
   const scrollRef = useRef(null);
   const store = usePreviewStore();
   const preview = store((state) => state.preview);
@@ -48,7 +48,7 @@ const ModelGenerator = () => {
         </div>
         <VariableSelector />
         <ModelSelector />
-        <ModelResult />
+        <ModelResult email={email}/>
       </div>
       <div className="w-full h-fit">
         <FileUploader />
