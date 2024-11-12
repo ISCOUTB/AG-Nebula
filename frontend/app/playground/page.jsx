@@ -2,9 +2,12 @@ import { redirect } from "next/navigation";
 import ModelGenerator from "@/components/ui/modelgenerator";
 import UserNavbar from "@/components/ui/userNavbar";
 import {checkIsAuthenticated} from "@/lib/auth/checkIsAuthenticated";
+import { auth } from "@/lib/auth/authConfig";
 
 export default async function Page() {
   const isAuthenticated = await checkIsAuthenticated();
+  const session = await auth();
+  const email = session.user.email;
 
   if (!isAuthenticated) {
     redirect("/sign-in");
@@ -15,7 +18,7 @@ export default async function Page() {
           {/*Mobile - File uploader*/}
           <UserNavbar />
           <div>
-            <ModelGenerator />
+            <ModelGenerator email={email}/>
           </div>
         </main>
       </div>
