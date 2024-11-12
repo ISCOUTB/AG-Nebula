@@ -110,11 +110,10 @@ export default function SessionHistory({ email }) {
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
         <Button 
-          variant="ghost" 
           size="icon" 
-          className="relative"
+          className="relative border bg-surface-container-low border-outline-variant dark:bg-surface-container-low-dark dark:border-outline-variant-dark"
         >
-          <InboxIcon className="h-5 w-5 text-primary dark:text-primary-foreground" />
+          <InboxIcon className="h-5 w-5 text-on-surface dark:text-on-surface-dark" />
           {sessions.length > 0 && (
             <Badge 
               variant="secondary" 
@@ -125,9 +124,9 @@ export default function SessionHistory({ email }) {
           )}
         </Button>
       </SheetTrigger>
-      <SheetContent className="w-[400px] sm:w-[540px]">
+      <SheetContent side="left" className="flex flex-col w-[400px] sm:w-[540px] bg-surface dark:bg-surface-dark pl-6 pr-4 border-0 rounded-r-2xl">
         <SheetHeader>
-          <SheetTitle className="flex items-center gap-2">
+          <SheetTitle className="flex items-center gap-2 text-on-surface dark:text-on-surface-dark">
             <BarChartIcon className="h-5 w-5" />
             Session History
           </SheetTitle>
