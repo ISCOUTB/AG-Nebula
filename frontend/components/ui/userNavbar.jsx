@@ -1,6 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { InboxIcon } from "lucide-react";
-import { auth } from "@/auth";
+import { auth } from "@/lib/auth/authConfig";
 
 const UserNavbar = async () => {
   const session = await auth();

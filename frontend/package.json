@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@auth/pg-adapter": "^1.7.3",
     "@auth/prisma-adapter": "^2.7.3",
     "@prisma/client": "^5.22.0",
     "@radix-ui/react-avatar": "^1.1.1",
@@ -26,6 +27,7 @@
     "lucide-react": "^0.451.0",
     "next": "14.2.15",
     "next-auth": "^5.0.0-beta.25",
+    "pg": "^8.13.1",
     "react": "latest",
     "react-dom": "latest",
     "react-dropzone": "^14.2.10",

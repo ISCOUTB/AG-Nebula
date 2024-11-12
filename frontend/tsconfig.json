@@ -34,7 +34,7 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "lib/store.js"
-  ],
+, "lib/postgres.js", "lib/auth/authConfig.ts"  ],
   "exclude": [
     "node_modules"
   ]
