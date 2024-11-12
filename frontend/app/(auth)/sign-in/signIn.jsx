@@ -6,7 +6,6 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-  CardFooter
 } from "@/components/ui/card";
 import { handleGoogleSignIn } from "@/lib/auth/googleSignInServerAction";
 import { ChromeIcon } from "lucide-react";

@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
 import SignInButton from "@/components/landing/signInButton";
-import Link from "next/link";
 
 export default function Home() {
   return (

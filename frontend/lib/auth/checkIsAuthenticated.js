@@ -7,6 +7,6 @@ export const checkIsAuthenticated = async () => {
     if (session) {
         return session;
     } else {
-        return false;c
+        return false;
     }
 }
