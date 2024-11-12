@@ -1,4 +1,4 @@
-'use client'
+"use client"
 
 import { useState, useEffect, useCallback, useMemo } from 'react'
 import { usePreviewStore } from "@/lib/store"
@@ -8,20 +8,24 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-  CardDescription
+  CardDescription,
 } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
 import {
-  BarChart,
   Bar,
+  BarChart,
   ScatterChart,
   Scatter,
   XAxis,
   YAxis,
   CartesianGrid,
-  Tooltip,
-  ResponsiveContainer
+  ResponsiveContainer,
+  LabelList
 } from "recharts"
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart"
 
 export default function ModelResult({ email }) {
   const store = usePreviewStore()
@@ -38,7 +42,7 @@ export default function ModelResult({ email }) {
     return results.feature_importance
       .filter(item => item && typeof item === "object" && item.Importance > 0)
       .sort((a, b) => b.Importance - a.Importance)
-      .slice(0, 10)  // Mostrar solo las 10 características más importantes
+      .slice(0, 10)
   }, [results])
 
   const predictionsChartData = useMemo(() => {
@@ -50,7 +54,7 @@ export default function ModelResult({ email }) {
 
   const saveResults = useCallback(async (resultsToSave) => {
     if (!email || isExistingSession) {
-      return  // No guardar si es una sesión existente
+      return
     }
 
     if (!resultsToSave || Object.keys(resultsToSave).length === 0) {
@@ -102,11 +106,9 @@ export default function ModelResult({ email }) {
       setIsLoading(true)
       try {
         if (isExistingSession && storeResults) {
-          // Si es una sesión existente, usar los resultados del store
           setResults(storeResults)
           setIsVisible(true)
         } else {
-          // Si no, hacer la llamada a la API
           const response = await fetch(
             `http://127.0.0.1:8000/train-model/?model_type=${selectedModel}`,
             { method: "POST" }
@@ -141,6 +143,20 @@ export default function ModelResult({ email }) {
 
   if (!isVisible) return null
 
+  const featureImportanceConfig = {
+    Importance: {
+      label: "Importance",
+      color: "hsl(var(--chart-1))",
+    },
+  }
+
+  const predictionsConfig = {
+    y_pred_test: {
+      label: "Predicted",
+      color: "hsl(var(--chart-1))",
+    },
+  }
+
   return (
     <Card className="mt-6">
       <CardHeader>
@@ -154,30 +170,73 @@ export default function ModelResult({ email }) {
           </div>
         ) : (
           <>
-            <div className="mb-6">
-              <h3 className="text-lg font-semibold mb-2">Feature Importance</h3>
-              <ResponsiveContainer width="100%" height={400}>
-                <BarChart data={importanceChartData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="Feature" />
-                  <YAxis />
-                  <Tooltip />
-                  <Bar dataKey="Importance" fill="#8884d8" />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold mb-2">Predictions vs Actual</h3>
-              <ResponsiveContainer width="100%" height={400}>
-                <ScatterChart>
-                  <CartesianGrid />
-                  <XAxis type="number" dataKey="y_test" name="Actual" />
-                  <YAxis type="number" dataKey="y_pred_test" name="Predicted" />
-                  <Tooltip cursor={{ strokeDasharray: '3 3' }} />
-                  <Scatter name="Predictions" data={predictionsChartData} fill="#8884d8" />
-                </ScatterChart>
-              </ResponsiveContainer>
-            </div>
+            <Card>
+              <CardHeader>
+                <CardTitle>Feature Importance</CardTitle>
+                <CardDescription>Top 10 most important features</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ChartContainer config={featureImportanceConfig}>
+                  <ResponsiveContainer width="100%" height={400}>
+                    <BarChart accessibilityLayer data={importanceChartData}>
+                      <CartesianGrid vertical={false} />
+                      <XAxis
+                        dataKey="Feature"
+                        tickLine={false}
+                        tickMargin={10}
+                        axisLine={false}
+                        tickFormatter={(value) => value.slice(0, 10)}
+                      />
+                      <YAxis
+                        tickLine={false}
+                        tickMargin={10}
+                        axisLine={false}
+                      />
+                      <ChartTooltip
+                        cursor={false}
+                        content={<ChartTooltipContent />}
+                      />
+                      <Bar layout='vertical' dataKey="Importance" fill="var(--color-Importance)" radius={4}>
+                        <LabelList dataKey={"Importance"} position={"top"} offset={12} fontSize={12} formatter={(value) => value.toFixed(2)}/>
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                </ChartContainer>
+              </CardContent>
+            </Card>
+            <Card className="mt-6">
+              <CardHeader>
+                <CardTitle>Predictions vs Actual</CardTitle>
+                <CardDescription>Scatter plot of predicted vs actual values</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ChartContainer config={predictionsConfig}>
+                  <ResponsiveContainer width="100%" height={400}>
+                    <ScatterChart>
+                      <CartesianGrid />
+                      <XAxis
+                        type="number"
+                        dataKey="y_test"
+                        name="Actual"
+                        tickLine={false}
+                        tickMargin={10}
+                        axisLine={false}
+                      />
+                      <YAxis
+                        type="number"
+                        dataKey="y_pred_test"
+                        name="Predicted"
+                        tickLine={false}
+                        tickMargin={10}
+                        axisLine={false}
+                      />
+                      <ChartTooltip content={<ChartTooltipContent />} />
+                      <Scatter name="Predictions" data={predictionsChartData} fill="var(--color-y_pred_test)" />
+                    </ScatterChart>
+                  </ResponsiveContainer>
+                </ChartContainer>
+              </CardContent>
+            </Card>
           </>
         )}
       </CardContent>

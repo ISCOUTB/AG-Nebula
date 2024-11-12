@@ -23,6 +23,8 @@ export default function SessionHistory({ email }) {
   const store = usePreviewStore()
   const { toast } = useToast()
 
+  console.log(sessions)
+
   const loadSessions = useCallback(async () => {
     if (!email) {
       toast({
@@ -149,9 +151,9 @@ export default function SessionHistory({ email }) {
                   onClick={() => loadSession(session)}
                 >
                   <CardHeader className="p-4">
-                    <CardTitle className="flex items-center justify-between text-base font-medium">
+                    <CardTitle className="flex items-center justify-between text-base">
                       <div className="flex items-center gap-2">
-                        <BarChartIcon className="h-4 w-4 text-primary" />
+                        <BarChartIcon className="h-4 w-4 text-primary-material dark:text-primary-material-dark" />
                         Model Analysis
                       </div>
                       <ChevronRightIcon className="h-4 w-4 text-muted-foreground" />
@@ -163,12 +165,12 @@ export default function SessionHistory({ email }) {
                     </div>
                     {session.result && typeof session.result === 'object' && (
                       <div className="mt-2 flex flex-wrap gap-2">
-                        <Badge variant="outline">
-                          {session.result.model_type || 'Unknown Model'}
+                        <Badge className='bg-secondary-container text-on-secondary-container dark:bg-secondary-container-dark dark:text-on-secondary-container-dark'>
+                          {session.result.metrics?.full_metrics?.mse.toFixed(4) || 'Unknown Model'}
                         </Badge>
                         {session.result.metrics && (
-                          <Badge variant="secondary">
-                            Score: {(session.result.metrics.r2_score || 0).toFixed(3)}
+                          <Badge className='bg-tertiary-container-dark text-on-tertiary-container-dark'>
+                            Score: {(session.result.metrics?.full_metrics?.r2_score || 0).toFixed(3)}
                           </Badge>
                         )}
                       </div>
