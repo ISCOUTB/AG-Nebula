@@ -29,14 +29,14 @@ const FileUploader = () => {
     formData.append("file", file);
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/upload-csv/", {
+      const response = await fetch(`http://129.153.69.231:8011/upload-csv/`, {
         method: "POST",
         body: formData,
       });
 
       if (!response.ok) throw new Error("Upload failed");
 
-      const previewResponse = await fetch("http://127.0.0.1:8000/data-preview/");
+      const previewResponse = await fetch(`http://129.153.69.231:8011/data-preview/`);
       if (!previewResponse.ok) throw new Error("Failed to fetch preview");
 
       const previewData = await previewResponse.json();

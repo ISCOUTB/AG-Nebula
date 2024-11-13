@@ -35,7 +35,7 @@ const ModelSelector = () => {
   useEffect(() => {
     if (selectedOutcome && selectedPredictors.length > 0) {
       setIsVisible(true);
-      fetch("http://127.0.0.1:8000/analyze-model/", {
+      fetch(`http://129.153.69.231:8011/analyze-model/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
