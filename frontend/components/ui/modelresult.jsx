@@ -76,7 +76,7 @@ export default function ModelResult({ email = '' }) {
       }
 
       try {
-        const response = await fetch("/api/result", {
+        const response = await fetch("/api/results", {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
