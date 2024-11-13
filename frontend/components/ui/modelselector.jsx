@@ -84,21 +84,17 @@ const ModelSelector = () => {
               >
                 {possibleModels.length > 0 ? (
                   possibleModels.map((model, index) => (
-                    <Card
+                    <div
                       key={index}
                       onClick={() => handleModelSelection(model.name)}
-                      className="flex-shrink-0 min-w-80 shadow-none dark:bg-surface-container-high-dark"
+                      className="flex-shrink-0 min-w-80 shadow-none bg-surface-container-high hover:bg-surface-container-highest dark:bg-surface-container-high-dark dark:hover:bg-surface-container-highest-dark transition-colors p-4 rounded-2xl cursor-pointer"
                     >
-                      <CardHeader>
-                        <CardTitle>{model.name}</CardTitle>
-                        <CardDescription className="max-w-96">{model.description}</CardDescription>
-                      </CardHeader>
-                      <CardContent>
-                        <Button className="bg-surface-container-high-dark border text-on-primary-container-dark border-outline-variant-dark">
-                          Use this model
-                        </Button>
-                      </CardContent>
-                    </Card>
+                      <div>
+                        <p className="font-montserrat font-semibold">{model.name}</p>
+                        <p className="font-cabin font-normal max-w-96 mt-3">{model.description}</p>
+                      </div>
+                      
+                    </div>
                   ))
                 ) : (
                   <div>Loading...</div>

@@ -41,11 +41,11 @@ const ModelGenerator = ({ email }) => {
   );
 
   return (
-    <div className="w-full h-[91svh] relative flex flex-col mt-3 gap-3">
+    <div className="w-full h-[100svh] relative flex flex-col">
       <FileUploader />
       <div
         ref={scrollRef}
-        className="w-full h-[82svh] flex flex-col xl:place-items-center overflow-y-scroll rounded-2xl"
+        className="w-full h-[86svh] flex flex-col xl:place-items-center overflow-y-scroll pt-6 rounded-2xl"
       >
         <div className="xl:max-w-[55vw]">
           <div>
