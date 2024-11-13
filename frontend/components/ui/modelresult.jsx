@@ -28,7 +28,7 @@ import {
 } from "@/components/ui/chart";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-export default function ModelResult({ email }) {
+export default function ModelResult({ email = '' }) {
   const store = usePreviewStore();
   const selectedModel = store(state => state.selectedModel);
   const storeResults = store(state => state.results);
@@ -36,9 +36,8 @@ export default function ModelResult({ email }) {
   const [results, setResults] = useState({});
   const [isVisible, setIsVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [loadingMessage, setLoadingMessage] = useState("");
   const { toast } = useToast();
-
-  console.log(results)
 
   const importanceChartData = useMemo(
     () => {
@@ -113,26 +112,44 @@ export default function ModelResult({ email }) {
     [email, isExistingSession, toast]
   );
 
-  useEffect(
-    () => {
-      let isMounted = true;
-      async function fetchResults() {
-        if (!selectedModel) {
-          setIsVisible(false);
-          return;
-        }
+  useEffect(() => {
+    let isMounted = true;
+    async function fetchResults() {
+      if (!selectedModel) {
+        setIsVisible(false);
+        return;
+      }
 
-        setIsLoading(true);
-        try {
-          if (isExistingSession && storeResults) {
-            setResults(storeResults);
-            setIsVisible(true);
-          } else {
-            const response = await fetch(
-              `http://127.0.0.1:8000/train-model/?model_type=${selectedModel}`,
-              { method: "POST" }
-            );
-            const data = await response.json();
+      setIsLoading(true);
+      setLoadingMessage("");
+      try {
+        if (isExistingSession && storeResults) {
+          setResults(storeResults);
+          setIsVisible(true);
+        } else {
+          const response = await fetch(
+            `http://127.0.0.1:8000/train-model/?model_type=${selectedModel}`,
+            { method: "POST" }
+          );
+          
+          const reader = response.body.getReader();
+          const decoder = new TextDecoder();
+
+          let completeResponse = '';
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            const chunk = decoder.decode(value);
+            completeResponse += chunk;
+            
+            if (chunk.includes("Fitting")) {
+              setLoadingMessage(chunk.trim());
+            }
+          }
+
+          // Parse the complete response as JSON
+          try {
+            const data = JSON.parse(completeResponse);
             if (isMounted) {
               setResults(data);
               setIsVisible(Object.keys(data).length > 0);
@@ -140,29 +157,32 @@ export default function ModelResult({ email }) {
                 await saveResults(data);
               }
             }
-          }
-        } catch (error) {
-          console.error("Error fetching results:", error);
-          if (isMounted) {
+          } catch (error) {
+            console.error("Error parsing JSON:", error);
             setResults({});
             setIsVisible(false);
           }
-        } finally {
-          if (isMounted) {
-            setIsLoading(false);
-          }
+        }
+      } catch (error) {
+        console.error("Error fetching results:", error);
+        if (isMounted) {
+          setResults({});
+          setIsVisible(false);
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
         }
       }
-      fetchResults();
+    }
+    fetchResults();
 
-      return () => {
-        isMounted = false;
-      };
-    },
-    [selectedModel, isExistingSession, storeResults, saveResults]
-  );
+    return () => {
+      isMounted = false;
+    };
+  }, [selectedModel, isExistingSession, storeResults, saveResults]);
 
-  if (!isVisible) return null;
+  if (!isVisible && !isLoading) return null;
 
   const featureImportanceConfig = {
     Importance: {
@@ -187,117 +207,122 @@ export default function ModelResult({ email }) {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        {isLoading
-          ? <div className="flex justify-center items-center h-64">
-              <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary" />
-            </div>
-          : <div>
-              <Tabs defaultValue="importance" className="w-full">
-                <TabsList>
-                  <TabsTrigger className="w-1/2" value="importance">
-                    Variable importance
-                  </TabsTrigger>
-                  <TabsTrigger className="w-1/2" value="prediction">
-                    Predictions
-                  </TabsTrigger>
-                </TabsList>
-                <TabsContent value="importance" className="h-[50vh]">
-                  <Card className="flex flex-col h-full">
-                    <CardHeader>
-                      <CardTitle>Feature Importance</CardTitle>
-                      <CardDescription>
-                        Top 10 most important features
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent className="flex-grow overflow-hidden">
-                      <ChartContainer
-                        className="w-full h-full"
-                        config={featureImportanceConfig}
-                      >
-                        <ResponsiveContainer width="100%" height="100%">
-                          <BarChart
-                            accessibilityLayer
-                            data={importanceChartData}
-                            layout="vertical"
+        {isLoading ? (
+          <div className="flex flex-col justify-center items-center h-64">
+            <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary mb-4" />
+            {loadingMessage && (
+              <p className="text-center text-sm text-gray-500">{loadingMessage}</p>
+            )}
+          </div>
+        ) : (
+          <div>
+            <Tabs defaultValue="importance" className="w-full">
+              <TabsList>
+                <TabsTrigger className="w-1/2" value="importance">
+                  Variable importance
+                </TabsTrigger>
+                <TabsTrigger className="w-1/2" value="prediction">
+                  Predictions
+                </TabsTrigger>
+              </TabsList>
+              <TabsContent value="importance" className="h-[50vh]">
+                <Card className="flex flex-col h-full">
+                  <CardHeader>
+                    <CardTitle>Feature Importance</CardTitle>
+                    <CardDescription>
+                      Top 10 most important features
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="flex-grow overflow-hidden">
+                    <ChartContainer
+                      className="w-full h-full"
+                      config={featureImportanceConfig}
+                    >
+                      <ResponsiveContainer width="100%" height="100%">
+                        <BarChart
+                          accessibilityLayer
+                          data={importanceChartData}
+                          layout="vertical"
+                        >
+                          <CartesianGrid horizontal={false} />
+                          <XAxis
+                            type="number"
+                            tickLine={false}
+                            axisLine={false}
+                          />
+                          <YAxis
+                            dataKey="Feature"
+                            type="category"
+                            tickLine={false}
+                            axisLine={false}
+                            width={100}
+                            tickFormatter={value => value.slice(0, 10)}
+                          />
+                          <ChartTooltip
+                            cursor={false}
+                            content={<ChartTooltipContent />}
+                          />
+                          <Bar
+                            dataKey="Importance"
+                            fill="var(--color-Importance)"
+                            radius={4}
                           >
-                            <CartesianGrid horizontal={false} />
-                            <XAxis
-                              type="number"
-                              tickLine={false}
-                              axisLine={false}
-                            />
-                            <YAxis
-                              dataKey="Feature"
-                              type="category"
-                              tickLine={false}
-                              axisLine={false}
-                              width={100}
-                              tickFormatter={value => value.slice(0, 10)}
-                            />
-                            <ChartTooltip
-                              cursor={false}
-                              content={<ChartTooltipContent />}
-                            />
-                            <Bar
+                            <LabelList
                               dataKey="Importance"
-                              fill="var(--color-Importance)"
-                              radius={4}
-                            >
-                              <LabelList
-                                dataKey="Importance"
-                                position="right"
-                                formatter={value => value.toFixed(2)}
-                              />
-                            </Bar>
-                          </BarChart>
-                        </ResponsiveContainer>
-                      </ChartContainer>
-                    </CardContent>
-                  </Card>
-                </TabsContent>
-                <TabsContent value="prediction" className="h-[50vh]">
-                  <Card className="flex flex-col h-full">
-                    <CardHeader>
-                      <CardTitle>Predictions vs Actual</CardTitle>
-                      <CardDescription>
-                        Scatter plot of predicted vs actual values
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent className="flex-grow overflow-hidden">
-                      <ChartContainer className="w-full h-full" config={predictionsConfig}>
-                        <ResponsiveContainer width="100%" height={'100%'}>
-                          <ScatterChart>
-                            <CartesianGrid />
-                            <XAxis
-                              type="number"
-                              dataKey="y_test"
-                              name="Actual"
-                              tickLine={false}
-                              tickMargin={10}
-                              axisLine={false}
+                              position="right"
+                              formatter={value => value.toFixed(2)}
                             />
-                            <YAxis
-                              type="number"
-                              dataKey="y_pred_test"
-                              name="Predicted"
-                              tickLine={false}
-                              tickMargin={10}
-                              axisLine={false}
-                            />
-                            <ChartTooltip content={<ChartTooltipContent />} />
-                            <Scatter
-                              name="Predictions"
-                              data={predictionsChartData}
-                              fill="var(--color-y_pred_test)"
-                            />
-                          </ScatterChart>
-                        </ResponsiveContainer>
-                      </ChartContainer>
-                    </CardContent>
-                  </Card>
-                </TabsContent>
-              </Tabs>
-            </div>}
+                          </Bar>
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </ChartContainer>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+              <TabsContent value="prediction" className="h-[50vh]">
+                <Card className="flex flex-col h-full">
+                  <CardHeader>
+                    <CardTitle>Predictions vs Actual</CardTitle>
+                    <CardDescription>
+                      Scatter plot of predicted vs actual values
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="flex-grow overflow-hidden">
+                    <ChartContainer className="w-full h-full" config={predictionsConfig}>
+                      <ResponsiveContainer width="100%" height={'100%'}>
+                        <ScatterChart>
+                          <CartesianGrid />
+                          <XAxis
+                            type="number"
+                            dataKey="y_test"
+                            name="Actual"
+                            tickLine={false}
+                            tickMargin={10}
+                            axisLine={false}
+                          />
+                          <YAxis
+                            type="number"
+                            dataKey="y_pred_test"
+                            name="Predicted"
+                            tickLine={false}
+                            tickMargin={10}
+                            axisLine={false}
+                          />
+                          <ChartTooltip content={<ChartTooltipContent />} />
+                          <Scatter
+                            name="Predictions"
+                            data={predictionsChartData}
+                            fill="var(--color-y_pred_test)"
+                          />
+                        </ScatterChart>
+                      </ResponsiveContainer>
+                    </ChartContainer>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+            </Tabs>
+          </div>
+        )}
       </CardContent>
     </Card>
   );
