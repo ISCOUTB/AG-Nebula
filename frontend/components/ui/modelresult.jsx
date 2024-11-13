@@ -26,6 +26,8 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+
 
 export default function ModelResult({ email }) {
   const store = usePreviewStore()
@@ -170,73 +172,83 @@ export default function ModelResult({ email }) {
           </div>
         ) : (
           <>
-            <Card>
-              <CardHeader>
-                <CardTitle>Feature Importance</CardTitle>
-                <CardDescription>Top 10 most important features</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ChartContainer config={featureImportanceConfig}>
-                  <ResponsiveContainer width="100%" height={400}>
-                    <BarChart accessibilityLayer data={importanceChartData}>
-                      <CartesianGrid vertical={false} />
-                      <XAxis
-                        dataKey="Feature"
-                        tickLine={false}
-                        tickMargin={10}
-                        axisLine={false}
-                        tickFormatter={(value) => value.slice(0, 10)}
-                      />
-                      <YAxis
-                        tickLine={false}
-                        tickMargin={10}
-                        axisLine={false}
-                      />
-                      <ChartTooltip
-                        cursor={false}
-                        content={<ChartTooltipContent />}
-                      />
-                      <Bar layout='vertical' dataKey="Importance" fill="var(--color-Importance)" radius={4}>
-                        <LabelList dataKey={"Importance"} position={"top"} offset={12} fontSize={12} formatter={(value) => value.toFixed(2)}/>
-                      </Bar>
-                    </BarChart>
-                  </ResponsiveContainer>
-                </ChartContainer>
-              </CardContent>
-            </Card>
-            <Card className="mt-6">
-              <CardHeader>
-                <CardTitle>Predictions vs Actual</CardTitle>
-                <CardDescription>Scatter plot of predicted vs actual values</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ChartContainer config={predictionsConfig}>
-                  <ResponsiveContainer width="100%" height={400}>
-                    <ScatterChart>
-                      <CartesianGrid />
-                      <XAxis
-                        type="number"
-                        dataKey="y_test"
-                        name="Actual"
-                        tickLine={false}
-                        tickMargin={10}
-                        axisLine={false}
-                      />
-                      <YAxis
-                        type="number"
-                        dataKey="y_pred_test"
-                        name="Predicted"
-                        tickLine={false}
-                        tickMargin={10}
-                        axisLine={false}
-                      />
-                      <ChartTooltip content={<ChartTooltipContent />} />
-                      <Scatter name="Predictions" data={predictionsChartData} fill="var(--color-y_pred_test)" />
-                    </ScatterChart>
-                  </ResponsiveContainer>
-                </ChartContainer>
-              </CardContent>
-            </Card>
+            <Tabs defaultValue="importance" className="w-full">
+              <TabsList>
+                <TabsTrigger className='w-1/2' value="importance">Variable importance</TabsTrigger>
+                <TabsTrigger className='w-1/2' value="prediction">Predictions</TabsTrigger>
+              </TabsList>
+              <TabsContent value="importance" className=' max-h-96'>
+                  <Card>
+                  <CardHeader>
+                    <CardTitle>Feature Importance</CardTitle>
+                    <CardDescription>Top 10 most important features</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <ChartContainer config={featureImportanceConfig}>
+                      <ResponsiveContainer width="100%" height={"100%"}>
+                        <BarChart accessibilityLayer data={importanceChartData}>
+                          <CartesianGrid vertical={false} />
+                          <XAxis
+                            dataKey="Feature"
+                            tickLine={false}
+                            tickMargin={10}
+                            axisLine={false}
+                            tickFormatter={(value) => value.slice(0, 10)}
+                          />
+                          <YAxis
+                            tickLine={false}
+                            tickMargin={10}
+                            axisLine={false}
+                          />
+                          <ChartTooltip
+                            cursor={false}
+                            content={<ChartTooltipContent />}
+                          />
+                          <Bar layout='vertical' dataKey="Importance" fill="var(--color-Importance)" radius={4}>
+                            <LabelList dataKey={"Importance"} position={"top"} offset={12} fontSize={12} formatter={(value) => value.toFixed(2)}/>
+                          </Bar>
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </ChartContainer>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+              <TabsContent value="prediction">
+                  <Card className="mt-6">
+                  <CardHeader>
+                    <CardTitle>Predictions vs Actual</CardTitle>
+                    <CardDescription>Scatter plot of predicted vs actual values</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <ChartContainer config={predictionsConfig}>
+                      <ResponsiveContainer width="100%" height={400}>
+                        <ScatterChart>
+                          <CartesianGrid />
+                          <XAxis
+                            type="number"
+                            dataKey="y_test"
+                            name="Actual"
+                            tickLine={false}
+                            tickMargin={10}
+                            axisLine={false}
+                          />
+                          <YAxis
+                            type="number"
+                            dataKey="y_pred_test"
+                            name="Predicted"
+                            tickLine={false}
+                            tickMargin={10}
+                            axisLine={false}
+                          />
+                          <ChartTooltip content={<ChartTooltipContent />} />
+                          <Scatter name="Predictions" data={predictionsChartData} fill="var(--color-y_pred_test)" />
+                        </ScatterChart>
+                      </ResponsiveContainer>
+                    </ChartContainer>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+            </Tabs>
           </>
         )}
       </CardContent>
