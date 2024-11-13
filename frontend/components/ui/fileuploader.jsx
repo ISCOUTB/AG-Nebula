@@ -1,5 +1,6 @@
 "use client";
 
+import clsx from "clsx";
 import { FilePlusIcon } from "@radix-ui/react-icons";
 import {
   Dialog,
@@ -15,6 +16,7 @@ import { usePreviewStore } from "@/lib/store";
 const FileUploader = () => {
   const [uploading, setUploading] = useState(false);
   const store = usePreviewStore();
+  const preview = store((state) => state.preview);
   const setPreview = store((state) => state.setPreview);
   const [error, setError] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
@@ -60,7 +62,10 @@ const FileUploader = () => {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
 
   return (
-    <div className="flex flex-row items-center justify-between w-full h-16 bg-surface-container-high dark:bg-surface-container-high-dark rounded-2xl pl-4 pr-2 select-none">
+    <div className={clsx("absolute flex flex-row items-center justify-between w-[55vw] h-16 bg-surface-container-high dark:bg-surface-container-high-dark rounded-2xl pl-4 pr-2 select-none z-50", {
+      "top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2": preview.header.length === 0,
+      "bottom-0 left-1/2 transform -translate-x-1/2": preview.header.length !== 0,
+    })}>
       <div id="uploadLabelsContainer">
         <h2 className="font-cabin font-normal text-sm">To get started</h2>
         <h1 className="font-montserrat font-semibold">Upload your csv file</h1>
