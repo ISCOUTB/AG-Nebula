@@ -45,9 +45,9 @@ const ModelGenerator = ({ email }) => {
       <FileUploader />
       <div
         ref={scrollRef}
-        className="w-full h-[82svh] flex flex-col place-items-center overflow-y-scroll rounded-2xl"
+        className="w-full h-[82svh] flex flex-col xl:place-items-center overflow-y-scroll rounded-2xl"
       >
-        <div className="max-w-[55vw]">
+        <div className="xl:max-w-[55vw]">
           <div>
             <TablePreview />
           </div>
