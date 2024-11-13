@@ -10,7 +10,7 @@ const SessionManager = async ({ session }) => {
   return (
     <Popover>
       <PopoverTrigger>
-        <Avatar>
+        <Avatar className="w-8 h-8">
           <AvatarImage src={session.user.image} />
           <AvatarFallback>User</AvatarFallback>
         </Avatar>

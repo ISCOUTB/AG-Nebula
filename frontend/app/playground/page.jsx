@@ -15,7 +15,7 @@ export default async function Page() {
   }
   const email = session.user.email;
   return (
-      <div className="w-svw h-svh flex flex-col py-3 px-4 bg-background-material dark:bg-background-material-dark overflow-x-hidden">
+      <div className="w-svw h-svh flex flex-col bg-background-material dark:bg-background-material-dark overflow-x-hidden">
         <main className="relative">
           {/*Mobile - File uploader*/}
           <UserNavbar />
