@@ -4,7 +4,6 @@ import { usePreviewStore } from "@/lib/store";
 import { useRef, useEffect, useState } from "react";
 import {
   Card,
-  CardContent,
   CardHeader,
   CardDescription,
   CardTitle,
