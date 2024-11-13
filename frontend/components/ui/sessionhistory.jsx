@@ -166,7 +166,7 @@ export default function SessionHistory({ email }) {
                     {session.result && typeof session.result === 'object' && (
                       <div className="mt-2 flex flex-wrap gap-2">
                         <Badge className='bg-secondary-container text-on-secondary-container dark:bg-secondary-container-dark dark:text-on-secondary-container-dark'>
-                          {session.result.metrics?.full_metrics?.mse.toFixed(4) || 'Unknown Model'}
+                          Median square error: {session.result.metrics?.full_metrics?.mse.toFixed(4) || 'Unknown Model'}
                         </Badge>
                         {session.result.metrics && (
                           <Badge className='bg-tertiary-container-dark text-on-tertiary-container-dark'>
