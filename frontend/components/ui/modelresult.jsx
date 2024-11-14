@@ -128,7 +128,7 @@ export default function ModelResult({ email = '' }) {
           setIsVisible(true);
         } else {
           const response = await fetch(
-            `http://129.153.69.231:8011/train-model/?model_type=${selectedModel}`,
+            `http://0.0.0.0:8011/train-model/?model_type=${selectedModel}`,
             { method: "POST" }
           );
           

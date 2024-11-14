@@ -70,7 +70,7 @@ const VariableSelector = () => {
     setSelectedOutcome(tempOutcome);
     setSelectedPredictors(tempPredictors);
 
-    fetch("http://129.153.69.231:8011/select-features-label/", {
+    fetch("http://0.0.0.0:8011/select-features-label/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
